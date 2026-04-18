@@ -15,6 +15,10 @@
         <a href="#">Tienda</a>
         <a href="#">Categorías</a>
         <a href="/login">Login</a>
+
+        <span th:if="${session.usuario}">
+            | Bienvenido, <b th:text="${session.usuario}"></b>
+        </span>
     </nav>
 </header>
 
