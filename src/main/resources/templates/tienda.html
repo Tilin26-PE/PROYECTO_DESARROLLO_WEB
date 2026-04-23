@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Tienda</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>GAMEXUS</h1>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/categorias">Categorias</a>
+        <a href="/login">Login</a>
+    </nav>
+</header>
+
+<section class="banner">
+    <h2>Tienda de videojuegos</h2>
+    <p>Explora por categoria y encuentra tu proxima partida</p>
+</section>
+
+<section class="category-bar">
+    <a class="category-pill" href="/tienda">Todas</a>
+    <a class="category-pill"
+       th:each="categoria : ${categorias}"
+       th:href="@{/tienda(categoria=${categoria})}"
+       th:text="${categoria}"
+       th:classappend="${categoria == categoriaSeleccionada} ? ' active' : ''">
+        Categoria
+    </a>
+</section>
+
+<section class="games">
+    <article class="game-card" th:each="juego : ${juegos}">
+        <img th:src="@{/imgs/{imagen}(imagen=${juego.imagen})}" src="/imgs/Fifa.jpg" th:alt="${juego.nombre}">
+        <h3 th:text="${juego.nombre}">Juego</h3>
+        <span class="game-category" th:text="${juego.categoria}">Categoria</span>
+        <p th:text="'S/ ' + ${juego.precio}">S/ 0</p>
+        <button>Comprar</button>
+    </article>
+</section>
+
+<p class="empty-message" th:if="${#lists.isEmpty(juegos)}">No hay juegos para esta categoria.</p>
+
+<footer>
+    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+</footer>
+</body>
+</html>

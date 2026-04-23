@@ -19,4 +19,14 @@ public class JuegoController {
     public List<String> listarJuegos() {
         return service.obtenerJuegos();
     }
+
+    @GetMapping("/catalogo")
+    public List<JuegoService.Juego> listarCatalogo(@RequestParam(required = false) String categoria) {
+        return service.obtenerPorCategoria(categoria);
+    }
+
+    @GetMapping("/categorias")
+    public List<String> listarCategorias() {
+        return service.obtenerCategorias();
+    }
 }

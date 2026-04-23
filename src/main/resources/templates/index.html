@@ -12,8 +12,8 @@
     <h1>🎮 GAMEXUS</h1>
     <nav>
         <a href="/">Inicio</a>
-        <a href="#">Tienda</a>
-        <a href="#">Categorías</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/categorias">Categorias</a>
         <a href="/login">Login</a>
 
         <span th:if="${session.usuario}">
@@ -30,28 +30,28 @@
 <section class="games">
 
     <div class="game-card">
-        <img src="https://via.placeholder.com/200x250">
+        <img th:src="@{/imgs/Fifa.jpg}" src="/imgs/Fifa.jpg" alt="FIFA 24">
         <h3>FIFA 24</h3>
         <p>S/ 199</p>
         <button>Comprar</button>
     </div>
 
     <div class="game-card">
-        <img src="https://via.placeholder.com/200x250">
+        <img th:src="@{/imgs/COD.jpg}" src="/imgs/COD.jpg" alt="Call of Duty">
         <h3>Call of Duty</h3>
         <p>S/ 249</p>
         <button>Comprar</button>
     </div>
 
     <div class="game-card">
-        <img src="https://via.placeholder.com/200x250">
+        <img th:src="@{/imgs/GOW.jpg}" src="/imgs/GOW.jpg" alt="God of War">
         <h3>God of War</h3>
         <p>S/ 179</p>
         <button>Comprar</button>
     </div>
 
     <div class="game-card">
-        <img src="https://via.placeholder.com/200x250">
+        <img th:src="@{/imgs/GTAV.jpg}" src="/imgs/GTAV.jpg" alt="GTA V">
         <h3>GTA V</h3>
         <p>S/ 99</p>
         <button>Comprar</button>

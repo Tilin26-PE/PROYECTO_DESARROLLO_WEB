@@ -37,26 +37,87 @@ nav a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 20px;
+    gap: 20px;
+    padding: 24px;
+}
+
+.category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 24px 0;
+}
+
+.category-pill {
+    text-decoration: none;
+    color: #e2e8f0;
+    background: #334155;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+}
+
+.category-pill:hover,
+.category-pill.active {
+    background: #6366f1;
+    color: #ffffff;
 }
 
 .game-card {
     background: #1e293b;
-    border-radius: 10px;
-    margin: 15px;
+    border-radius: 12px;
     padding: 15px;
-    width: 200px;
+    width: 230px;
     text-align: center;
-    transition: 0.3s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
 }
 
 .game-card:hover {
-    transform: scale(1.05);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.35);
 }
 
 .game-card img {
     width: 100%;
-    border-radius: 8px;
+    height: 280px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 10px;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.game-card:hover img {
+    transform: scale(1.04);
+}
+
+.game-card h3 {
+    margin: 14px 0 8px;
+    min-height: 44px;
+}
+
+.game-card p {
+    margin: 0;
+}
+
+.game-category {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .game-card {
+        width: min(92vw, 300px);
+    }
+
+    .game-card img {
+        height: 240px;
+    }
 }
 
 .game-card button {
@@ -67,6 +128,44 @@ nav a:hover {
     color: white;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.category-card {
+    text-decoration: none;
+    background: #1e293b;
+    border-radius: 12px;
+    color: #ffffff;
+    padding: 22px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.35);
+}
+
+.category-card h3 {
+    margin: 0 0 10px;
+}
+
+.category-card span {
+    color: #94a3b8;
+}
+
+.empty-message {
+    text-align: center;
+    margin: 20px 0 32px;
+    color: #cbd5e1;
 }
 
 footer {
