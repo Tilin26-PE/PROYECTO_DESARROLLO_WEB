@@ -16,6 +16,8 @@
             <h2>GAMEXUS</h2>
             <p class="subtitle">Bienvenido(a), inicia sesión</p>
 
+            <p th:if="${error}" style="color:#ff6b6b; margin-bottom: 12px; font-weight: 600;" th:text="${error}"></p>
+
             <form action="/login" method="POST">
 
                 <div class="input-group">
@@ -29,10 +31,21 @@
                 </div>
 
                 <button type="submit" class="btn-login">Ingresar</button>
+            </form>
 
-                <p class="register-text">¿No tienes cuenta?  
-                    <a href="/register">Regístrate</a>
-                </p>
+            <hr style="margin:18px 0; border-color: rgba(255,255,255,0.06)">
+
+            <form action="/register" method="POST" class="register-form">
+                <p style="color:#b9c2ff; margin-bottom:8px;">¿No tienes cuenta? Regístrate</p>
+                <div class="input-group">
+                    <label for="reg_username">Usuario</label>
+                    <input type="text" id="reg_username" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg_password">Contraseña</label>
+                    <input type="password" id="reg_password" name="password" required>
+                </div>
+                <button type="submit" class="btn-login" style="background:#22c55e; margin-top:8px">Registrarme</button>
             </form>
         </div>
     </div>

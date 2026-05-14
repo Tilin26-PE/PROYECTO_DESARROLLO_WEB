@@ -1,48 +1,66 @@
 package proyecto_web.proyecto.service;
 
-import org.springframework.stereotype.Service;
 import java.util.Comparator;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import proyecto_web.proyecto.model.Juego;
+import proyecto_web.proyecto.repository.JuegoRepository;
 
 @Service
 public class JuegoService {
 
-    public record Juego(String nombre, String categoria, int precio, String imagen) {
+    private final JuegoRepository juegoRepository;
+
+    public JuegoService(JuegoRepository juegoRepository) {
+        this.juegoRepository = juegoRepository;
     }
 
-    private final List<Juego> catalogo = List.of(
-            new Juego("FIFA 24", "Deportes", 199, "Fifa.jpg"),
-            new Juego("Call of Duty", "Accion", 249, "COD.jpg"),
-            new Juego("God of War", "Accion", 179, "GOW.jpg"),
-            new Juego("GTA V", "Mundo Abierto", 99, "GTAV.jpg")
-    );
+    public List<Juego> obtenerTodos() {
+        return juegoRepository.findAll().stream()
+                .sorted(Comparator.comparing(Juego::getNombre, String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+    }
 
     public List<String> obtenerJuegos() {
-        return catalogo.stream()
-                .map(Juego::nombre)
+        return obtenerTodos().stream()
+                .map(Juego::getNombre)
                 .toList();
     }
 
     public List<Juego> obtenerCatalogo() {
-        return catalogo;
+        return obtenerTodos();
     }
 
     public List<Juego> obtenerPorCategoria(String categoria) {
         if (categoria == null || categoria.isBlank()) {
-            return catalogo;
+            return obtenerTodos();
         }
 
-        return catalogo.stream()
-                .filter(juego -> juego.categoria().equalsIgnoreCase(categoria))
+        return obtenerTodos().stream()
+                .filter(juego -> categoria.equalsIgnoreCase(juego.getCategoria()))
                 .toList();
     }
 
     public List<String> obtenerCategorias() {
-        return catalogo.stream()
-                .map(Juego::categoria)
+        return obtenerTodos().stream()
+                .map(Juego::getCategoria)
+                .filter(categoria -> categoria != null && !categoria.isBlank())
                 .distinct()
                 .sorted(Comparator.naturalOrder())
                 .collect(Collectors.toList());
+    }
+
+    public Juego guardar(Juego juego) {
+        return juegoRepository.save(juego);
+    }
+
+    public java.util.Optional<Juego> buscarPorId(Long id) {
+        return juegoRepository.findById(id);
+    }
+
+    public void eliminar(Long id) {
+        juegoRepository.deleteById(id);
     }
 }

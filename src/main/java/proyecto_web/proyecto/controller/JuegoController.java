@@ -21,7 +21,7 @@ public class JuegoController {
     }
 
     @GetMapping("/catalogo")
-    public List<JuegoService.Juego> listarCatalogo(@RequestParam(required = false) String categoria) {
+    public List<proyecto_web.proyecto.model.Juego> listarCatalogo(@RequestParam(required = false) String categoria) {
         return service.obtenerPorCategoria(categoria);
     }
 

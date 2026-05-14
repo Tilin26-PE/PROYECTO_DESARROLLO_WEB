@@ -1,25 +1,27 @@
 package proyecto_web.proyecto;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import proyecto_web.proyecto.service.LoginService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 public class LoginServiceTest {
+
+    @Autowired
+    private LoginService service;
 
     @Test
     public void loginCorrectoDebeRetornarTrue() {
-        LoginService service = new LoginService();
-
-        boolean result = service.login("admin", "1234");
+        boolean result = service.login("admin", "admin123");
 
         assertTrue(result);
     }
 
     @Test
     public void loginIncorrectoDebeRetornarFalse() {
-        LoginService service = new LoginService();
-
         boolean result = service.login("user", "0000");
 
         assertFalse(result);

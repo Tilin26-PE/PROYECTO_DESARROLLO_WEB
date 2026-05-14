@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Admin</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<header class="admin-topbar">
+    <div>
+        <p class="eyebrow">Panel de administración</p>
+        <h1>GAMEXUS Admin</h1>
+    </div>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/admin">Admin</a>
+    </nav>
+</header>
+
+<main class="admin-shell">
+    <section class="hero-card">
+        <div>
+            <p class="eyebrow">Control total</p>
+            <h2>Gestiona juegos y reseñas desde un solo lugar</h2>
+            <p>Solo los usuarios con rol administrador pueden acceder a esta página.</p>
+        </div>
+        <div class="stats-grid">
+            <article>
+                <span>Juegos</span>
+                <strong th:text="${#lists.size(juegos)}">0</strong>
+            </article>
+            <article>
+                <span>Reseñas</span>
+                <strong th:text="${#lists.size(resenas)}">0</strong>
+            </article>
+        </div>
+    </section>
+
+    <section class="panel-grid">
+        <article class="panel-card">
+            <h3 th:text="${juegoForm.id != null ? 'Editar juego' : 'Crear juego'}">Juego</h3>
+            <form th:action="@{/admin/juegos/guardar}" th:object="${juegoForm}" method="post" class="admin-form" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}">
+                <label>Nombre<input type="text" th:field="*{nombre}" required></label>
+                <label>Categoría<input type="text" th:field="*{categoria}" required></label>
+                <label>Descripción<textarea th:field="*{descripcion}" rows="4" required></textarea></label>
+                <label>Precio<input type="number" step="0.01" th:field="*{precio}" required></label>
+                <label>Imagen URL<input type="text" th:field="*{imagenUrl}" required></label>
+                <label>Archivo de imagen<input type="file" name="imagenFile" accept="image/*"></label>
+                <button type="submit">Guardar juego</button>
+            </form>
+        </article>
+
+        <article class="panel-card">
+            <h3 th:text="${resenaForm.id != null ? 'Editar reseña' : 'Crear reseña'}">Reseña</h3>
+            <form th:action="@{/admin/resenas/guardar}" th:object="${resenaForm}" method="post" class="admin-form">
+                <input type="hidden" th:field="*{id}">
+                <label>Juego
+                    <select th:field="*{juegoId}" required>
+                        <option value="">Selecciona un juego</option>
+                        <option th:each="juego : ${juegosDisponibles}" th:value="${juego.id}" th:text="${juego.nombre}"></option>
+                    </select>
+                </label>
+                <label>Autor<input type="text" th:field="*{autor}" required></label>
+                <label>Calificación<input type="number" min="1" max="5" th:field="*{calificacion}" required></label>
+                <label>Comentario<textarea th:field="*{comentario}" rows="4" required></textarea></label>
+                <button type="submit">Guardar reseña</button>
+            </form>
+        </article>
+    </section>
+
+    <section class="panel-card table-card">
+        <div class="section-title">
+            <h3>Juegos registrados</h3>
+            <span th:text="${#lists.size(juegos)} + ' elementos'"></span>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="juego : ${juegos}">
+                    <td th:text="${juego.nombre}">Juego</td>
+                    <td th:text="${juego.categoria}">Categoria</td>
+                    <td th:text="'S/ ' + ${juego.precio}">0</td>
+                    <td class="actions">
+                        <a th:href="@{/admin(editarJuego=${juego.id})}">Editar</a>
+                        <a th:href="@{/admin/juegos/eliminar/{id}(id=${juego.id})}" onclick="return confirm('¿Eliminar este juego?')">Eliminar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel-card table-card">
+        <div class="section-title">
+            <h3>Reseñas registradas</h3>
+            <span th:text="${#lists.size(resenas)} + ' elementos'"></span>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Juego</th>
+                    <th>Autor</th>
+                    <th>Calificación</th>
+                    <th>Comentario</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="resena : ${resenas}">
+                    <td th:text="${resena.juego != null ? resena.juego.nombre : '-'}">Juego</td>
+                    <td th:text="${resena.autor}">Autor</td>
+                    <td th:text="${resena.calificacion}">5</td>
+                    <td th:text="${resena.comentario}">Comentario</td>
+                    <td class="actions">
+                        <a th:href="@{/admin(editarResena=${resena.id})}">Editar</a>
+                        <a th:href="@{/admin/resenas/eliminar/{id}(id=${resena.id})}" onclick="return confirm('¿Eliminar esta reseña?')">Eliminar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package proyecto_web.proyecto.controller;
 
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpSession;
 import proyecto_web.proyecto.service.LoginService;
 
 @RestController
@@ -16,5 +17,11 @@ public class LoginController {
     @PostMapping
     public boolean login(@RequestParam String user, @RequestParam String pass) {
         return service.login(user, pass);
+    }
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
     }
 }

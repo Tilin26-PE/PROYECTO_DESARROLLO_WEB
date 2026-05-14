@@ -14,6 +14,7 @@
         <a href="/tienda">Tienda</a>
         <a href="/categorias">Categorias</a>
         <a href="/login">Login</a>
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
     </nav>
 </header>
 
@@ -35,7 +36,7 @@
 
 <section class="games">
     <article class="game-card" th:each="juego : ${juegos}">
-        <img th:src="@{/imgs/{imagen}(imagen=${juego.imagen})}" src="/imgs/Fifa.jpg" th:alt="${juego.nombre}">
+        <img th:src="@{${juego.imagenUrl}}" src="/imgs/Fifa.jpg" th:alt="${juego.nombre}">
         <h3 th:text="${juego.nombre}">Juego</h3>
         <span class="game-category" th:text="${juego.categoria}">Categoria</span>
         <p th:text="'S/ ' + ${juego.precio}">S/ 0</p>
