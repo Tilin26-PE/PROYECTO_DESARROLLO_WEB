@@ -42,4 +42,15 @@ public class LoginService {
         usuarioRepository.save(u);
         return u;
     }
+
+    public Usuario buscarOCrearPorEmail(String email, String rol) {
+    return usuarioRepository.findByUsername(email)
+            .orElseGet(() -> {
+                Usuario nuevo = new Usuario();
+                nuevo.setUsername(email);
+                nuevo.setPassword(""); // sin contraseña porque usa Google
+                nuevo.setRole(rol);
+                return usuarioRepository.save(nuevo);
+            });
+}
 }

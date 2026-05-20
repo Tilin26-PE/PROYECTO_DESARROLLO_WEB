@@ -1,47 +1,55 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
     <title>GAMEXUS - Marketplace</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
 
-<body>
-
-<header>
-    <h1>🎮 GAMEXUS</h1>
-    <nav>
+  <body>
+    <header>
+      <h1>🎮 GAMEXUS</h1>
+      <nav>
         <a href="/">Inicio</a>
         <a href="/tienda">Tienda</a>
         <a href="/categorias">Categorias</a>
-        <a href="/login">Login</a>
-        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
-            <li th:if="${session.usuario} != null"><a href="/logout">Logout</a></li>
-
-        <span th:if="${session.usuario}">
-            | Bienvenido, <b th:text="${session.usuario}"></b>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">🛒 Carrito</a>
+        <a
+          th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}"
+          href="/admin"
+          >Admin</a
+        >
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+        <span th:if="${session.usuario != null}">
+          | Bienvenido, <b th:text="${session.usuario}"></b>
         </span>
-    </nav>
-</header>
+      </nav>
+    </header>
 
-<section class="banner">
-    <h2>Compra tus videojuegos favoritos</h2>
-    <p>Ofertas, novedades y los mejores títulos digitales</p>
-</section>
+    <section class="banner">
+      <h2>Compra tus videojuegos favoritos</h2>
+      <p>Ofertas, novedades y los mejores títulos digitales</p>
+    </section>
 
-<section class="games">
-    <div class="game-card" th:each="juego : ${juegos}">
-        <img th:src="@{${juego.imagenUrl}}" th:alt="${juego.nombre}">
+    <section class="games">
+      <div class="game-card" th:each="juego : ${juegos}">
+        <img th:src="@{${juego.imagenUrl}}" th:alt="${juego.nombre}" />
         <h3 th:text="${juego.nombre}">Juego</h3>
-        <span class="game-category" th:text="${juego.categoria}">Categoria</span>
+        <span class="game-category" th:text="${juego.categoria}"
+          >Categoria</span
+        >
         <p th:text="'S/ ' + ${juego.precio}">S/ 0</p>
-        <button>Comprar</button>
-    </div>
-</section>
+        <a th:if="${session.usuario == null}" href="/login">
+          <button>Comprar</button>
+        </a>
+        <button th:if="${session.usuario != null}">Comprar</button>
+      </div>
+    </section>
 
-<footer>
-    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
-</footer>
-
-</body>
+    <footer>
+      <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+    </footer>
+  </body>
 </html>
