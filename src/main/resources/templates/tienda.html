@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMEXUS - Tienda</title>
+    <title>GAMEXUS - Marketplace</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -13,38 +13,66 @@
         <a href="/">Inicio</a>
         <a href="/tienda">Tienda</a>
         <a href="/categorias">Categorias</a>
-        <a href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">Carrito</a>
         <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+        <span th:if="${session.usuario != null}" class="subtle">Bienvenido, <b th:text="${session.usuario}"></b></span>
     </nav>
 </header>
 
-<section class="banner">
-    <h2>Tienda de videojuegos</h2>
-    <p>Explora por categoria y encuentra tu proxima partida</p>
-</section>
 
-<section class="category-bar">
-    <a class="category-pill" href="/tienda">Todas</a>
-    <a class="category-pill"
-       th:each="categoria : ${categorias}"
-       th:href="@{/tienda(categoria=${categoria})}"
-       th:text="${categoria}"
-       th:classappend="${categoria == categoriaSeleccionada} ? ' active' : ''">
-        Categoria
-    </a>
-</section>
+<main class="page-shell">
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <h2>JUEGOS</h2>
+            </div>
+            <aside class="hero-card">
+                <strong th:text="${#lists.size(juegos)}">0</strong>
+                <span>juegos disponibles en la categoría seleccionada.</span>
+            </aside>
+        </div>
+    </section>
 
-<section class="games">
-    <article class="game-card" th:each="juego : ${juegos}">
-        <img th:src="@{${juego.imagenUrl}}" src="/imgs/Fifa.jpg" th:alt="${juego.nombre}">
-        <h3 th:text="${juego.nombre}">Juego</h3>
-        <span class="game-category" th:text="${juego.categoria}">Categoria</span>
-        <p th:text="'S/ ' + ${juego.precio}">S/ 0</p>
-        <button>Comprar</button>
-    </article>
-</section>
+    <section class="store-toolbar">
+        <div>
+            <h2 class="section-title">Explora el catálogo</h2>
+            <p>Usa los filtros para moverte entre géneros sin perder el estilo de tienda.</p>
+        </div>
+        <div class="category-bar">
+            <a class="category-pill" href="/tienda">Todas</a>
+            <a class="category-pill"
+               th:each="categoria : ${categorias}"
+               th:href="@{/tienda(categoria=${categoria})}"
+               th:text="${categoria}"
+               th:classappend="${categoria == categoriaSeleccionada} ? ' active' : ''">
+                Categoria
+            </a>
+        </div>
+    </section>
 
-<p class="empty-message" th:if="${#lists.isEmpty(juegos)}">No hay juegos para esta categoria.</p>
+    <section class="games">
+        <a class="game-card game-card-link"
+           th:each="juego : ${juegos}"
+           th:href="@{/juego/{id}(id=${juego.id})}"
+           rel="noopener noreferrer">
+            <div class="game-image">
+                <img th:src="@{${juego.imagenUrl}}" src="/imgs/Fifa.jpg" th:alt="${juego.nombre}">
+                <span class="game-badge">Ver ficha</span>
+            </div>
+            <div class="game-body">
+                <span class="game-category" th:text="${juego.categoria}">Categoria</span>
+                <h3 th:text="${juego.nombre}">Juego</h3>
+                <p class="game-price" th:text="'S/ ' + ${juego.precio}">S/ 0</p>
+                <span class="game-cta">Abrir tráiler y descripción</span>
+            </div>
+        </a>
+    </section>
+
+    <p class="empty-message" th:if="${#lists.isEmpty(juegos)}">No hay juegos para esta categoria.</p>
+</main>
 
 <footer>
     <p>© 2026 GAMEXUS - Todos los derechos reservados</p>

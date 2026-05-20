@@ -75,7 +75,12 @@ public class AdminController {
             return "redirect:/login";
         }
 
-        // Si se subió un archivo, guardarlo en resources/static/imgs y actualizar imagenUrl
+        Juego juegoExistente = null;
+        if (juego.getId() != null) {
+            juegoExistente = juegoService.buscarPorId(juego.getId()).orElse(null);
+        }
+
+        // Si se subió un archivo, guardarlo en resources/static/imgs y actualizar imagenUrl.
         if (imagenFile != null && !imagenFile.isEmpty()) {
             try {
                 String uploadsDir = System.getProperty("user.dir") + "/src/main/resources/static/imgs";
@@ -89,6 +94,11 @@ public class AdminController {
                 redirectAttributes.addFlashAttribute("error", "No se pudo subir la imagen: " + e.getMessage());
                 return "redirect:/admin";
             }
+        } else if ((juego.getImagenUrl() == null || juego.getImagenUrl().isBlank()) && juegoExistente != null) {
+            juego.setImagenUrl(juegoExistente.getImagenUrl());
+        } else if (juego.getImagenUrl() == null || juego.getImagenUrl().isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "Debes subir una portada o indicar una URL de imagen.");
+            return "redirect:/admin";
         }
 
         juegoService.guardar(juego);

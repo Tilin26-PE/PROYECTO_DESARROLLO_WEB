@@ -21,16 +21,22 @@ public class Juego {
     private String descripcion;
     private Double precio;
     private String imagenUrl;
+    private String videoUrl;
 
     public Juego() {
     }
 
     public Juego(String nombre, String categoria, String descripcion, Double precio, String imagenUrl) {
+        this(nombre, categoria, descripcion, precio, imagenUrl, null);
+    }
+
+    public Juego(String nombre, String categoria, String descripcion, Double precio, String imagenUrl, String videoUrl) {
         this.nombre = nombre;
         this.categoria = categoria;
         this.descripcion = descripcion;
         this.precio = precio;
         this.imagenUrl = imagenUrl;
+        this.videoUrl = videoUrl;
     }
 
     public Long getId() {
@@ -79,5 +85,13 @@ public class Juego {
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 }

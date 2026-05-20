@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAMEXUS - Categorias</title>
+    <title>GAMEXUS - Marketplace</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -13,21 +13,38 @@
         <a href="/">Inicio</a>
         <a href="/tienda">Tienda</a>
         <a href="/categorias">Categorias</a>
-        <a href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">Carrito</a>
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+        <span th:if="${session.usuario != null}" class="subtle">Bienvenido, <b th:text="${session.usuario}"></b></span>
     </nav>
 </header>
 
-<section class="banner">
-    <h2>Categorias disponibles</h2>
-    <p>Selecciona una categoria y ve los titulos de la tienda</p>
-</section>
 
-<section class="category-grid">
-    <a class="category-card" th:each="categoria : ${categorias}" th:href="@{/tienda(categoria=${categoria})}">
-        <h3 th:text="${categoria}">Categoria</h3>
-        <span>Ver juegos</span>
-    </a>
-</section>
+<main class="page-shell">
+    <section class="hero">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <span class="chip">Orden por categoría</span>
+                <h2>Explora los géneros</h2>
+                <p>Cada categoría lleva al mismo sistema de fichas con videos, descripciones y estilo uniforme.</p>
+            </div>
+            <aside class="hero-card">
+                <strong th:text="${#lists.size(categorias)}">0</strong>
+                <span>categorías disponibles para filtrar el catálogo.</span>
+            </aside>
+        </div>
+    </section>
+
+    <section class="category-grid">
+        <a class="category-card" th:each="categoria : ${categorias}" th:href="@{/tienda(categoria=${categoria})}">
+            <h3 th:text="${categoria}">Categoria</h3>
+            <span>Ver juegos</span>
+        </a>
+    </section>
+</main>
 
 <footer>
     <p>© 2026 GAMEXUS - Todos los derechos reservados</p>

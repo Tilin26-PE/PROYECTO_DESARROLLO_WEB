@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Tienda</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>GAMEXUS</h1>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/categorias">Categorias</a>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">Carrito</a>
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+    </nav>
+</header>
+
+<main class="page-shell detail-page">
+    <section class="hero">
+        <div class="detail-layout">
+            <article class="detail-media">
+                <div class="detail-poster">
+                    <img th:src="@{${juego.imagenUrl}}" th:alt="${juego.nombre}">
+                </div>
+            </article>
+
+            <article class="detail-panel">
+                <div>
+                    <span class="chip" th:text="${juego.categoria}">Categoria</span>
+                    <h2 class="detail-title" th:text="${juego.nombre}">Nombre del juego</h2>
+                </div>
+
+                <div class="detail-meta">
+                    <p class="detail-price" th:text="'S/ ' + ${juego.precio}">S/ 0</p>
+                    
+                </div>
+
+                <div class="detail-copy">
+                    <p th:text="${juego.descripcion}">Descripcion del juego</p>
+                </div>
+
+                <div class="detail-chips">
+                    <a class="button-solid" href="/tienda">Volver al catálogo</a>
+                
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="detail-section">
+        <h2 class="section-title">Trailer</h2>
+       <p></p>
+        <div class="detail-video" th:if="${videoEmbedUrl != null}">
+            <iframe th:src="${videoEmbedUrl}" title="Trailer del juego" allowfullscreen
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+    </section>
+
+    <section class="detail-section" th:if="${juegosRelacionados != null and !#lists.isEmpty(juegosRelacionados)}">
+        <h2 class="section-title">Más de esta categoría</h2>
+        <div class="related-grid">
+            <a class="related-card" th:each="relacionado : ${juegosRelacionados}" th:href="@{/juego/{id}(id=${relacionado.id})}" rel="noopener noreferrer">
+                <div class="thumb">
+                    <img th:src="@{${relacionado.imagenUrl}}" th:alt="${relacionado.nombre}">
+                </div>
+                <span class="game-category" th:text="${relacionado.categoria}">Categoria</span>
+                <h3 th:text="${relacionado.nombre}">Juego relacionado</h3>
+            </a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+</footer>
+</body>
+</html>

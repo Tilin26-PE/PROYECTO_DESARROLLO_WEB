@@ -35,41 +35,53 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Usuarios por defecto creados: admin/user (contraseñas: admin123/user123)");
         }
 
+        // Cargar juegos por defecto si la tabla está vacía
         if (juegoRepository.count() == 0) {
-            juegoRepository.save(new Juego("FIFA 24", "Deportes", "Simulador de fútbol", 199.0, "/imgs/Fifa.jpg"));
-            juegoRepository.save(new Juego("Call of Duty", "Accion", "Shooter de acción", 249.0, "/imgs/COD.jpg"));
-            juegoRepository.save(new Juego("God of War", "Accion", "Aventura épica", 179.0, "/imgs/GOW.jpg"));
-            juegoRepository.save(new Juego("GTA V", "Mundo Abierto", "Mundo abierto y acción", 99.0, "/imgs/GTAV.jpg"));
-            System.out.println("Juegos de ejemplo creados en la base de datos");
+            Juego juego1 = new Juego("Agua y Fuego", "2-Player Aventura", 
+                "Un juego cooperativo donde controlas dos personajes, uno de fuego y otro de agua. Resuelve puzzles y supera obstáculos trabajando juntos.", 
+                29.99, "/imgs/agua-fuego.jpg", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+            
+            Juego juego2 = new Juego("Howgarts Legacy", "RPG", 
+                "Experimenta la magia de Hogwarts como estudiante. Descubre secretos, aprende hechizos y vive una aventura en el universo de Harry Potter.", 
+                100.0, "/imgs/hogwarts.jpg", "https://www.youtube.com/watch?v=gyygtBTN3bc");
+            
+            Juego juego3 = new Juego("FIFA 26", "Deportes", 
+                "El videojuego de fútbol más popular del mundo. Crea tu equipo de ensueño y compite contra jugadores de todo el mundo.", 
+                120.0, "/imgs/fifa26.jpg", "https://www.youtube.com/watch?v=B-6gQ3Ev4Uw");
+            
+            Juego juego4 = new Juego("Call Of Duty: Modern Warfare 3", "Shooter", 
+                "La campaña de un jugador más épica jamás creada. Combate terroristas, misiones encubiertas y batallas a gran escala.", 
+                200.0, "/imgs/cod-mw3.jpg", "https://www.youtube.com/watch?v=eBwC9hPhJ9o");
+            
+            Juego juego5 = new Juego("GTA V", "Acción", 
+                "Explora la ciudad más grande jamás creada en un videojuego. Realiza misiones, causa caos y vive la vida del crimen en Los Santos.", 
+                50.0, "/imgs/gta-v.jpg", "https://www.youtube.com/watch?v=QkkoHAzjnuc");
+            
+            Juego juego6 = new Juego("God of War", "Acción", 
+                "Acompaña a Kratos en una épica aventura nórdica. Lucha contra dioses mitológicos en este masterpiece de la industria.", 
+                100.0, "/imgs/god-of-war.jpg", "https://www.youtube.com/watch?v=KsJbTG1W-ks");
+            
+            juegoRepository.save(juego1);
+            juegoRepository.save(juego2);
+            juegoRepository.save(juego3);
+            juegoRepository.save(juego4);
+            juegoRepository.save(juego5);
+            juegoRepository.save(juego6);
+            System.out.println("Juegos por defecto cargados en la tienda (6 videojuegos)");
         }
 
-        if (resenaRepository.count() == 0 && juegoRepository.count() > 0) {
-            Juego fifa = juegoRepository.findAll().stream()
-                    .filter(juego -> "FIFA 24".equalsIgnoreCase(juego.getNombre()))
-                    .findFirst()
-                    .orElse(null);
-            Juego gow = juegoRepository.findAll().stream()
-                    .filter(juego -> "God of War".equalsIgnoreCase(juego.getNombre()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (fifa != null) {
-                Resena resena = new Resena();
-                resena.setAutor("Equipo GAMEXUS");
-                resena.setComentario("Juego ideal para mostrar el panel de administración.");
-                resena.setCalificacion(5);
-                resena.setJuego(fifa);
-                resenaRepository.save(resena);
+        // Mostrar todos los videojuegos disponibles en la tienda
+        System.out.println("\n========== VIDEOJUEGOS DISPONIBLES EN GAMEXUS ==========");
+        var juegos = juegoRepository.findAll();
+        if (!juegos.isEmpty()) {
+            for (Juego juego : juegos) {
+                System.out.println(juego.getNombre() + " | Categoría: " + juego.getCategoria() + 
+                        " | Precio: S/ " + juego.getPrecio() + " | ID: " + juego.getId());
             }
-
-            if (gow != null) {
-                Resena resena = new Resena();
-                resena.setAutor("Editor principal");
-                resena.setComentario("Combate sólido y buen ejemplo para reseñas editables.");
-                resena.setCalificacion(4);
-                resena.setJuego(gow);
-                resenaRepository.save(resena);
-            }
+        } else {
+            System.out.println("No hay videojuegos registrados en la tienda.");
         }
+        System.out.println("Total: " + juegos.size() + " videojuegos");
+        System.out.println("========================================================\n");
     }
 }

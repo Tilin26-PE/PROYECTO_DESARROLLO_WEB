@@ -111,6 +111,13 @@ body {
     font-size: 0.95rem;
 }
 
+.helper-text {
+    color: #94a3b8;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    margin-top: -4px;
+}
+
 .admin-form input,
 .admin-form textarea,
 .admin-form select {
@@ -121,6 +128,12 @@ body {
     border-radius: 12px;
     padding: 12px 14px;
     font: inherit;
+}
+
+.admin-form input[type="file"] {
+    padding: 10px;
+    background: rgba(15, 23, 42, 0.95);
+    cursor: pointer;
 }
 
 .admin-form button {

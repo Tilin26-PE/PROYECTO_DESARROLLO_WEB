@@ -23,8 +23,7 @@
     <section class="hero-card">
         <div>
             <p class="eyebrow">Control total</p>
-            <h2>Gestiona juegos y reseñas desde un solo lugar</h2>
-            <p>Solo los usuarios con rol administrador pueden acceder a esta página.</p>
+            <h1>Gestion de videojuegos</h1>
         </div>
         <div class="stats-grid">
             <article>
@@ -47,8 +46,10 @@
                 <label>Categoría<input type="text" th:field="*{categoria}" required></label>
                 <label>Descripción<textarea th:field="*{descripcion}" rows="4" required></textarea></label>
                 <label>Precio<input type="number" step="0.01" th:field="*{precio}" required></label>
-                <label>Imagen URL<input type="text" th:field="*{imagenUrl}" required></label>
-                <label>Archivo de imagen<input type="file" name="imagenFile" accept="image/*"></label>
+                <label>Imagen URL de respaldo<input type="text" th:field="*{imagenUrl}" placeholder="Opcional si subes la portada como archivo"></label>
+                <label>Video URL del tráiler<input type="url" th:field="*{videoUrl}" placeholder="https://www.youtube.com/watch?v=..."></label>
+                <label>Archivo de imagen de portada<input type="file" name="imagenFile" accept="image/*"></label>
+                <small class="helper-text">Sube aquí la portada del juego; si no lo haces, se usará la URL escrita arriba.</small>
                 <button type="submit">Guardar juego</button>
             </form>
         </article>
@@ -83,6 +84,7 @@
                     <th>Nombre</th>
                     <th>Categoría</th>
                     <th>Precio</th>
+                    <th>Tráiler</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
@@ -91,6 +93,10 @@
                     <td th:text="${juego.nombre}">Juego</td>
                     <td th:text="${juego.categoria}">Categoria</td>
                     <td th:text="'S/ ' + ${juego.precio}">0</td>
+                    <td>
+                        <a th:if="${juego.videoUrl != null and !#strings.isEmpty(juego.videoUrl)}" th:href="${juego.videoUrl}" rel="noopener noreferrer">Ver video</a>
+                        <span th:unless="${juego.videoUrl != null and !#strings.isEmpty(juego.videoUrl)}">Sin video</span>
+                    </td>
                     <td class="actions">
                         <a th:href="@{/admin(editarJuego=${juego.id})}">Editar</a>
                         <a th:href="@{/admin/juegos/eliminar/{id}(id=${juego.id})}" onclick="return confirm('¿Eliminar este juego?')">Eliminar</a>
