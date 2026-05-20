@@ -47,7 +47,14 @@
 
                 <div class="detail-chips">
                     <a class="button-solid" href="/tienda">Volver al catálogo</a>
-                
+                    
+                <div>
+                    <a th:if="${session.usuario == null}" class="button-solid button-success" href="/login">Comprar</a>
+                    <form th:if="${session.usuario != null}" action="/carrito/agregar" method="POST" style="display:inline;">
+                        <input type="hidden" name="juegoId" th:value="${juego.id}">
+                        <button class="button-solid button-success" type="submit"><b>COMPRAR</b></button>
+                    </form>
+                </div>
                 </div>
             </article>
         </div>

@@ -188,6 +188,11 @@ nav a:hover {
     box-shadow: 0 12px 30px rgba(124, 92, 255, 0.28);
 }
 
+.button-solid.button-success {
+    background: linear-gradient(135deg, #23b06b, #58e08a);
+    box-shadow: 0 12px 30px rgba(35, 176, 107, 0.28);
+}
+
 .button-ghost,
 .button-link {
     background: rgba(255, 255, 255, 0.05);
@@ -200,6 +205,10 @@ nav a:hover {
 .button-link:hover,
 .game-cta:hover {
     transform: translateY(-2px);
+}
+
+.button-solid.button-success:hover {
+    box-shadow: 0 14px 34px rgba(35, 176, 107, 0.34);
 }
 
 .hero-card {
