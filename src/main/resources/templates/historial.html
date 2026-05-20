@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>GAMEXUS - Historial</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+
+<header>
+    <h1>🎮 GAMEXUS</h1>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/categorias">Categorias</a>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">🛒 Carrito</a>
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+        <span th:if="${session.usuario != null}">
+            | Bienvenido, <b th:text="${session.usuario}"></b>
+        </span>
+    </nav>
+</header>
+
+<div style="max-width:800px; margin:40px auto; padding:0 20px;">
+    <h2>📦 Historial de Compras</h2>
+
+    <div th:if="${#lists.isEmpty(ordenes)}">
+        <p style="color:#94a3b8;">No tienes compras aún. <a href="/" style="color:#6366f1;">Ver juegos</a></p>
+    </div>
+
+    <div th:each="orden : ${ordenes}" style="background:#1e293b; border-radius:10px; padding:20px; margin-bottom:20px;">
+        <p style="color:#94a3b8; margin:0 0 10px;">
+            Orden #<span th:text="${orden.id}"></span> —
+            <span th:text="${#temporals.format(orden.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+        </p>
+        <div th:each="item : ${orden.items}" style="display:flex; gap:10px; align-items:center; margin-bottom:8px;">
+            <img th:src="${item.juego.imagenUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:6px;">
+            <span th:text="${item.juego.nombre}"></span>
+            <span style="color:#94a3b8;">— S/ <span th:text="${item.precio}"></span></span>
+        </div>
+        <h4 style="margin:10px 0 0; color:#6366f1;">Total: S/ <span th:text="${orden.total}"></span></h4>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+</footer>
+
+</body>
+</html>

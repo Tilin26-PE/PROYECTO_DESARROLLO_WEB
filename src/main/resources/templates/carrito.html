@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>GAMEXUS - Carrito</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+
+<header>
+    <h1>🎮 GAMEXUS</h1>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/categorias">Categorias</a>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">🛒 Carrito</a>
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+        <span th:if="${session.usuario != null}">
+            | Bienvenido, <b th:text="${session.usuario}"></b>
+        </span>
+    </nav>
+</header>
+
+<div style="max-width:800px; margin:40px auto; padding:0 20px;">
+    <h2>🛒 Tu Carrito</h2>
+
+    <div th:if="${#lists.isEmpty(items)}">
+        <p style="color:#94a3b8;">Tu carrito está vacío. <a href="/" style="color:#6366f1;">Ver juegos</a></p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(items)}">
+        <div th:each="item : ${items}" style="background:#1e293b; border-radius:10px; padding:15px; margin-bottom:15px; display:flex; align-items:center; gap:15px;">
+            <img th:src="${item.juego.imagenUrl}" th:alt="${item.juego.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+            <div style="flex:1;">
+                <h3 th:text="${item.juego.nombre}" style="margin:0 0 5px;"></h3>
+                <p style="margin:0; color:#94a3b8;">S/ <span th:text="${item.precio}"></span></p>
+            </div>
+
+            <!-- Botones + y - -->
+            <div style="display:flex; align-items:center; gap:8px;">
+                <form action="/carrito/quitar" method="POST">
+                    <input type="hidden" name="juegoId" th:value="${item.juego.id}">
+                    <button type="submit" style="background:#334155; border:none; color:white; width:32px; height:32px; border-radius:6px; cursor:pointer; font-size:1.2rem;">−</button>
+                </form>
+
+                <span th:text="${item.cantidad}" style="font-size:1.1rem; min-width:20px; text-align:center;"></span>
+
+                <form action="/carrito/agregar" method="POST">
+                    <input type="hidden" name="juegoId" th:value="${item.juego.id}">
+                    <button type="submit" style="background:#334155; border:none; color:white; width:32px; height:32px; border-radius:6px; cursor:pointer; font-size:1.2rem;">+</button>
+                </form>
+            </div>
+
+            <!-- Quitar todo -->
+            <form action="/carrito/eliminar" method="POST">
+                <input type="hidden" name="juegoId" th:value="${item.juego.id}">
+                <button type="submit" style="background:#ef4444; border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;">Quitar</button>
+            </form>
+        </div>
+
+        <div style="background:#1e293b; border-radius:10px; padding:20px; margin-top:20px;">
+            <h3>Total: S/ <span th:text="${total}"></span></h3>
+            <form action="/carrito/confirmar" method="POST">
+                <button type="submit" style="background:#6366f1; border:none; color:white; padding:12px 24px; border-radius:6px; cursor:pointer; font-size:1rem;">
+                    Confirmar Compra
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+</footer>
+
+</body>
+</html>
