@@ -16,11 +16,7 @@
         <a th:if="${session.usuario == null}" href="/login">Login</a>
         <a th:if="${session.usuario == null}" href="/register">Register</a>
         <a href="/carrito">🛒 Carrito</a>
-        <a
-          th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}"
-          href="/admin"
-          >Admin</a
-        >
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
         <a th:if="${session.usuario != null}" href="/logout">Logout</a>
         <span th:if="${session.usuario != null}">
           | Bienvenido, <b th:text="${session.usuario}"></b>
@@ -37,14 +33,15 @@
       <div class="game-card" th:each="juego : ${juegos}">
         <img th:src="@{${juego.imagenUrl}}" th:alt="${juego.nombre}" />
         <h3 th:text="${juego.nombre}">Juego</h3>
-        <span class="game-category" th:text="${juego.categoria}"
-          >Categoria</span
-        >
+        <span class="game-category" th:text="${juego.categoria}">Categoria</span>
         <p th:text="'S/ ' + ${juego.precio}">S/ 0</p>
         <a th:if="${session.usuario == null}" href="/login">
           <button>Comprar</button>
         </a>
-        <button th:if="${session.usuario != null}">Comprar</button>
+        <form th:if="${session.usuario != null}" action="/carrito/agregar" method="POST" style="display:inline;">
+          <input type="hidden" name="juegoId" th:value="${juego.id}">
+          <button type="submit">Comprar</button>
+        </form>
       </div>
     </section>
 
