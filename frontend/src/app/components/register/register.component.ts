@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
+
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -72,6 +73,38 @@ import { AuthService } from '../../services/auth.service';
             <button type="submit" class="button-solid" style="width: 100%; padding: 12px; font-size: 1rem;">Registrarse</button>
           </div>
 
+          <div style="margin-top: 12px;">
+  <div style="text-align:center; color: var(--muted); margin: 12px 0;">
+    ───── o ─────
+  </div>
+
+  <button
+    type="button"
+    (click)="loginWithGoogle()"
+    style="
+      width:100%;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:white;
+      color:#333;
+      font-weight:700;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    ">
+    <img
+      src="https://developers.google.com/identity/images/g-logo.png"
+      width="18"
+      height="18"
+      alt="Google"
+    />
+    Continuar con Google
+  </button>
+</div>
+
         </form>
 
         <div style="border-top: 1px solid var(--border); margin-top: 24px; padding-top: 18px; text-align: center; font-size: 0.88rem; color: var(--muted);">
@@ -90,39 +123,58 @@ export class RegisterComponent {
   public errorMessage = signal<string>('');
 
   constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  private authService: AuthService,
+  private router: Router
+) {}
 
   onSubmit() {
     this.errorMessage.set('');
-    
-    if (!this.username.trim() || !this.email.trim() || !this.password.trim()) {
+
+    if (
+      !this.username.trim() ||
+      !this.email.trim() ||
+      !this.password.trim()
+    ) {
       this.errorMessage.set('Todos los campos son requeridos.');
       return;
     }
 
     if (this.password.length < 4) {
-      this.errorMessage.set('La contraseña debe tener al menos 4 caracteres.');
+      this.errorMessage.set(
+        'La contraseña debe tener al menos 4 caracteres.'
+      );
       return;
     }
 
     if (this.password !== this.confirmPassword) {
-      this.errorMessage.set('Las contraseñas ingresadas no coinciden.');
+      this.errorMessage.set(
+        'Las contraseñas ingresadas no coinciden.'
+      );
       return;
     }
 
-    this.authService.register({
-      username: this.username,
-      email: this.email,
-      password: this.password
-    }).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.error || 'No se pudo crear la cuenta.');
-      }
-    });
+    this.authService
+      .register({
+        username: this.username,
+        email: this.email,
+        password: this.password
+      })
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.errorMessage.set(
+            err.error?.error ||
+            'No se pudo crear la cuenta.'
+          );
+        }
+      });
   }
+
+  loginWithGoogle() {
+  window.location.href =
+    'http://localhost:8080/oauth2/authorization/google';
+}
+  
 }

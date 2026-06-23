@@ -57,4 +57,14 @@ export class AuthService {
   changePassword(passwordData: { currentPassword: string; newPassword: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/cambiar-password`, passwordData, { withCredentials: true });
   }
+
+  googleLogin(token: string): Observable<User> {
+  return this.http.post<User>(
+    `${this.apiUrl}/google`,
+    { token },
+    { withCredentials: true }
+  ).pipe(
+    tap(user => this.currentUser.set(user))
+  );
+}
 }
