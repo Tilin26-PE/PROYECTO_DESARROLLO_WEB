@@ -1,0 +1,33 @@
+import { Routes } from '@angular/router';
+import { HomeComponent } from './components/home/home.component';
+import { TiendaComponent } from './components/tienda/tienda.component';
+import { CatalogoComponent } from './components/catalogo/catalogo.component';
+import { JuegoDetalleComponent } from './components/juego-detalle/juego-detalle.component';
+import { CompararComponent } from './components/comparar/comparar.component';
+import { TopJuegosComponent } from './components/top-juegos/top-juegos.component';
+import { LanzamientosComponent } from './components/lanzamientos/lanzamientos.component';
+import { CarritoComponent } from './components/carrito/carrito.component';
+import { FavoritosComponent } from './components/favoritos/favoritos.component';
+import { ActividadComponent } from './components/actividad/actividad.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { PerfilComponent } from './components/perfil/perfil.component';
+import { AdminComponent } from './components/admin/admin.component';
+
+export const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'tienda', component: TiendaComponent },
+  { path: 'catalogo', component: CatalogoComponent },
+  { path: 'juego/:id', component: JuegoDetalleComponent },
+  { path: 'comparar', component: CompararComponent },
+  { path: 'top-juegos', component: TopJuegosComponent },
+  { path: 'lanzamientos', component: LanzamientosComponent },
+  { path: 'carrito', component: CarritoComponent },
+  { path: 'favoritos', component: FavoritosComponent },
+  { path: 'actividad', component: ActividadComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'perfil', component: PerfilComponent },
+  { path: 'admin', component: AdminComponent },
+  { path: '**', redirectTo: '' }
+];
