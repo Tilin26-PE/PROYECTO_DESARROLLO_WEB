@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Detalle de Noticia</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
+</head>
+<body>
+<header>
+    <h1>GAMEXUS</h1>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+        <a class="active" href="/noticias">Noticias</a>
+        <a href="/guias">Guías</a>
+        <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+        <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+        <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">Carrito</a>
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+                <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+</header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+<main class="page-shell">
+    <article class="panel-card" style="max-width: 900px; margin: 0 auto; padding: 32px; background: var(--surface-strong); border-radius: 24px;">
+        <div style="margin-bottom: 20px;">
+            <a href="/noticias" class="button-ghost" style="padding: 8px 16px; margin-bottom: 20px; font-size: 0.9rem;">← Volver a Noticias</a>
+        </div>
+        
+        <header style="background: transparent; border: 0; padding: 0; display: block; position: static; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+            <span class="game-category" th:text="${#temporals.format(noticia.fecha, 'dd/MM/yyyy')}">Fecha</span>
+            <h1 th:text="${noticia.titulo}" style="font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.1; margin: 12px 0 8px; text-transform: none; letter-spacing: normal;">Título Noticia</h1>
+            <p th:text="${noticia.subtitulo}" style="font-size: 1.25rem; color: var(--muted); line-height: 1.4; margin: 0 0 20px 0;">Subtítulo noticia</p>
+        </header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+        <div th:if="${noticia.imagenUrl != null}" style="border-radius: 20px; overflow: hidden; margin-bottom: 30px; border: 1px solid var(--border);">
+            <img th:src="@{${noticia.imagenUrl}}" th:alt="${noticia.titulo}" style="width: 100%; max-height: 480px; object-fit: cover; display: block;">
+        </div>
+
+        <div style="font-size: 1.1rem; line-height: 1.8; color: var(--text); white-space: pre-line;">
+            <p th:text="${noticia.contenido}"></p>
+        </div>
+
+        <div th:if="${noticia.juego != null}" style="margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <h3 style="margin-bottom: 12px;">Juego relacionado:</h3>
+            <a th:href="@{/juego/{id}(id=${noticia.juego.id})}" class="button-solid" style="text-decoration: none;" th:text="${noticia.juego.nombre}">Ver ficha del juego</a>
+        </div>
+    </article>
+</main>
+
+<footer>
+    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+</footer>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
+</body>
+</html>

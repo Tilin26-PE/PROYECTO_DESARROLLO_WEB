@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Perfil</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>GAMEXUS</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+            <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+            <a href="/noticias">Noticias</a>
+            <a href="/guias">Guías</a>
+            <a th:if="${session.usuario != null}" class="active" href="/perfil">Perfil</a>
+            <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+            <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+            <a th:if="${session.usuario == null}" href="/login">Login</a>
+            <a th:if="${session.usuario == null}" href="/register">Register</a>
+            <a href="/carrito">Carrito</a>
+            <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+            <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+                    <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+    </header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="page-shell">
+        <section class="hero">
+            <div class="hero-grid">
+                <div class="hero-copy">
+                    <span class="chip">Mi perfil</span>
+                    <h2 th:text="${perfil != null and perfil.displayName != null ? perfil.displayName : 'Usuario'}">
+                        Perfil</h2>
+                    <p th:text="${perfil != null ? perfil.bio : 'Aún no has completado tu biografía.'}">Biografía</p>
+                </div>
+                <aside class="hero-card">
+                    <strong th:text="${perfil != null ? perfil.username : '-'}">-</strong>
+                    <span>Identificador de inicio de sesión</span>
+                </aside>
+            </div>
+        </section>
+
+        <!-- Success and Error Messages -->
+        <div th:if="${success}" class="chip" style="background: rgba(35, 176, 107, 0.15); border: 1px solid #23b06b; color: #58e08a; padding: 12px 20px; border-radius: 12px; max-width: 760px; margin: 0 auto 20px; display: block; text-align: center;" th:text="${success}"></div>
+        <div th:if="${error}" class="chip" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 12px 20px; border-radius: 12px; max-width: 760px; margin: 0 auto 20px; display: block; text-align: center;" th:text="${error}"></div>
+
+        <section class="panel-card" style="max-width: 760px; margin: 0 auto;">
+            <h3>Actualizar Perfil</h3>
+            <form action="/perfil" method="post" class="admin-form">
+                <label>Nombre visible / Alias<input type="text" name="displayName"
+                        th:value="${perfil != null ? perfil.displayName : ''}"></label>
+                <label>Correo<input type="email" name="email" th:value="${perfil != null ? perfil.email : ''}"></label>
+                <label>Avatar URL<input type="text" name="avatarUrl"
+                        th:value="${perfil != null ? perfil.avatarUrl : ''}"></label>
+                <label>Biografía<textarea name="bio" rows="4"
+                        th:text="${perfil != null ? perfil.bio : ''}"></textarea></label>
+                
+                <div style="display: flex; align-items: center; gap: 10px; margin: 16px 0; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                    <input type="checkbox" id="alertasDescuentos" name="alertasDescuentos" value="true"
+                           th:checked="${perfil != null and perfil.alertasDescuentos}"
+                           style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent);">
+                    <label for="alertasDescuentos" style="margin: 0; cursor: pointer; font-weight: 600; color: var(--text);">
+                        Recibir alertas de descuentos de mis juegos favoritos 🔔
+                    </label>
+                </div>
+
+                <button type="submit" class="button-solid">Guardar cambios</button>
+            </form>
+        </section>
+
+        <section class="panel-card" style="max-width: 760px; margin: 24px auto 0;">
+            <h3>Seguridad y Contraseña</h3>
+            <form action="/perfil/cambiar-password" method="post" class="admin-form">
+                <label>Contraseña Actual
+                    <input type="password" name="currentPassword" placeholder="••••••••" required>
+                </label>
+                <label>Nueva Contraseña
+                    <input type="password" name="newPassword" placeholder="••••••••" required>
+                </label>
+                <label>Confirmar Nueva Contraseña
+                    <input type="password" name="confirmPassword" placeholder="••••••••" required>
+                </label>
+                <button type="submit" class="button-solid" style="background: linear-gradient(135deg, var(--accent-3), #ffaa72); box-shadow: 0 12px 30px rgba(255, 139, 61, 0.28);">Cambiar Contraseña</button>
+            </form>
+        </section>
+
+        <section class="panel-card" style="max-width: 760px; margin: 24px auto 0;">
+            <h3>Actividad reciente</h3>
+            <div th:if="${#lists.isEmpty(actividadReciente)}">Todavía no hay actividad registrada.</div>
+            <ul th:if="${!#lists.isEmpty(actividadReciente)}">
+                <li th:each="actividad : ${actividadReciente}"
+                    th:text="${actividad.accion + ' - ' + actividad.detalle}">Actividad</li>
+            </ul>
+        </section>
+    </main>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
+</body>
+
+</html>

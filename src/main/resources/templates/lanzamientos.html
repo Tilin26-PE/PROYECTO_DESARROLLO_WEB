@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Calendario de Lanzamientos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>GAMEXUS</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+            <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a class="active" href="/lanzamientos">Lanzamientos</a>
+            <a href="/noticias">Noticias</a>
+            <a href="/guias">Guías</a>
+            <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+            <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+            <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+            <a th:if="${session.usuario == null}" href="/login">Login</a>
+            <a th:if="${session.usuario == null}" href="/register">Register</a>
+            <a href="/carrito">Carrito</a>
+            <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+            <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+            <span th:if="${session.usuario != null}" class="subtle">Bienvenido, <b th:text="${session.usuario}"></b></span>
+                    <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+    </header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="page-shell">
+        <section class="hero" style="margin-bottom: 30px;">
+            <div class="hero-copy">
+                <h2>Calendario de Lanzamientos</h2>
+                <p>Mantente al día con la industria gamer. Explora las fechas oficiales de lanzamiento, las novedades del mes y los lanzamientos más esperados.</p>
+            </div>
+        </section>
+
+        <!-- Proximos Lanzamientos Section -->
+        <h2 class="timeline-section-header">Próximos Lanzamientos (Esperados)</h2>
+        <div th:if="${#lists.isEmpty(proximos)}" class="empty-message" style="margin: 20px 0 40px 36px;">
+            No hay lanzamientos futuros programados en este momento.
+        </div>
+
+        <div th:if="${!#lists.isEmpty(proximos)}" class="timeline-container">
+            <div class="timeline-node" th:each="juego : ${proximos}">
+                <!-- Dot marker -->
+                <div class="timeline-marker"></div>
+                
+                <!-- Content Card -->
+                <div class="timeline-content-card">
+                    <!-- Image -->
+                    <div style="text-align: center;">
+                        <img th:src="@{${juego.imagenUrl}}" th:alt="${juego.nombre}">
+                    </div>
+
+                    <!-- Info -->
+                    <div class="timeline-game-info">
+                        <span class="timeline-date badge-upcoming" 
+                              th:text="${juego.fechaLanzamiento != null} ? ${#temporals.format(juego.fechaLanzamiento, 'dd MMMM, yyyy')} : 'Por anunciar'">Fecha</span>
+                        <h3 th:text="${juego.nombre}">Juego</h3>
+                        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 6px;" th:text="'Categoría: ' + ${juego.categoria} + ' | Plataformas: ' + ${juego.plataforma}"></p>
+                        <p th:text="${juego.descripcion}"></p>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="timeline-actions-col">
+                        <a th:href="@{/juego/{id}(id=${juego.id})}" class="button-solid" style="padding: 8px 16px; font-size: 0.88rem;">Ver Detalles</a>
+                        <span class="chip" style="justify-content: center; font-size: 0.82rem; font-weight: 700; color: var(--accent-3);">Reservas próximamente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Lanzamientos Recientes Section -->
+        <h2 class="timeline-section-header">Lanzamientos Recientes</h2>
+        <div th:if="${#lists.isEmpty(lanzados)}" class="empty-message" style="margin: 20px 0 40px 36px;">
+            No se han registrado lanzamientos del catálogo.
+        </div>
+
+        <div th:if="${!#lists.isEmpty(lanzados)}" class="timeline-container">
+            <div class="timeline-node" th:each="juego : ${lanzados}">
+                <!-- Dot marker -->
+                <div class="timeline-marker" style="border-color: var(--accent-2);"></div>
+                
+                <!-- Content Card -->
+                <div class="timeline-content-card">
+                    <!-- Image -->
+                    <div style="text-align: center;">
+                        <img th:src="@{${juego.imagenUrl}}" th:alt="${juego.nombre}">
+                    </div>
+
+                    <!-- Info -->
+                    <div class="timeline-game-info">
+                        <span class="timeline-date" 
+                              th:text="${juego.fechaLanzamiento != null} ? ${#temporals.format(juego.fechaLanzamiento, 'dd MMMM, yyyy')} : 'Lanzado'">Fecha</span>
+                        <h3 th:text="${juego.nombre}">Juego</h3>
+                        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 6px;" th:text="'Categoría: ' + ${juego.categoria} + ' | Plataformas: ' + ${juego.plataforma}"></p>
+                        <p th:text="${juego.descripcion}"></p>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="timeline-actions-col">
+                        <span style="font-weight: 800; font-size: 1.15rem; color: white; text-align: center; margin-bottom: 4px;" th:text="'S/ ' + ${juego.precio}">S/ 0</span>
+                        <a th:href="@{/juego/{id}(id=${juego.id})}" class="button-ghost" style="padding: 8px 16px; font-size: 0.88rem; font-weight: 700;">Ficha y Requisitos</a>
+                        <form th:action="@{/carrito/agregar/{juegoId}(juegoId=${juego.id})}" method="post" style="display: inline;">
+                            <button type="submit" class="button-solid" style="padding: 8px 16px; font-size: 0.88rem; font-weight: 700; cursor: pointer; width: 100%;">Comprar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+    </footer>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import proyecto_web.proyecto.model.Orden;
 import proyecto_web.proyecto.model.OrdenItem;
+import proyecto_web.proyecto.service.HistorialActividadService;
 import proyecto_web.proyecto.service.CarritoService;
 
 import java.util.HashMap;
@@ -16,9 +17,11 @@ import java.util.Map;
 public class CarritoController {
 
     private final CarritoService carritoService;
+    private final HistorialActividadService historialActividadService;
 
-    public CarritoController(CarritoService carritoService) {
+    public CarritoController(CarritoService carritoService, HistorialActividadService historialActividadService) {
         this.carritoService = carritoService;
+        this.historialActividadService = historialActividadService;
     }
 
     @GetMapping("/carrito")
@@ -42,6 +45,7 @@ public class CarritoController {
         Map<Long, Integer> carrito = obtenerCarrito(session);
         carritoService.agregarAlCarrito(carrito, juegoId);
         session.setAttribute("carrito", carrito);
+        historialActividadService.registrar((String) session.getAttribute("usuario"), "CARRITO_AGREGAR", "Agregó un juego al carrito", null);
         return "redirect:/carrito";
     }
 
@@ -50,6 +54,7 @@ public class CarritoController {
         Map<Long, Integer> carrito = obtenerCarrito(session);
         carritoService.quitarDelCarrito(carrito, juegoId);
         session.setAttribute("carrito", carrito);
+        historialActividadService.registrar((String) session.getAttribute("usuario"), "CARRITO_QUITAR", "Quitó una unidad del carrito", null);
         return "redirect:/carrito";
     }
 
@@ -63,6 +68,7 @@ public class CarritoController {
         Orden orden = carritoService.confirmarCompra(carrito, username);
         session.setAttribute("carrito", carrito);
         model.addAttribute("orden", orden);
+        historialActividadService.registrar(username, "COMPRA_CONFIRMADA", "Confirmó una compra", null);
         return "redirect:/historial";
     }
 
@@ -91,6 +97,7 @@ public String eliminar(@RequestParam Long juegoId, HttpSession session) {
     Map<Long, Integer> carrito = obtenerCarrito(session);
     carritoService.quitarDelCarrito(carrito, juegoId);
     session.setAttribute("carrito", carrito);
+    historialActividadService.registrar((String) session.getAttribute("usuario"), "CARRITO_ELIMINAR", "Eliminó un juego del carrito", null);
     return "redirect:/carrito";
 }
 }

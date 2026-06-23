@@ -1,10 +1,14 @@
 package proyecto_web.proyecto.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,6 +23,15 @@ public class Usuario {
     private String username;
     private String password; // almacenado en bcrypt
     private String role;
+    private String displayName;
+    @Column(unique = true)
+    private String email;
+    private String avatarUrl;
+    @Column(length = 1000)
+    private String bio;
+    private Boolean alertasDescuentos = true;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Usuario() {}
 
@@ -58,5 +71,73 @@ public class Usuario {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @PrePersist
+    public void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        updatedAt = now;
+        if (displayName == null || displayName.isBlank()) {
+            displayName = username;
+        }
+    }
+
+    @PreUpdate
+    public void onUpdate() {
+        updatedAt = LocalDateTime.now();
+        if (displayName == null || displayName.isBlank()) {
+            displayName = username;
+        }
+    }
+
+    public Boolean getAlertasDescuentos() {
+        return alertasDescuentos;
+    }
+
+    public void setAlertasDescuentos(Boolean alertasDescuentos) {
+        this.alertasDescuentos = alertasDescuentos;
     }
 }

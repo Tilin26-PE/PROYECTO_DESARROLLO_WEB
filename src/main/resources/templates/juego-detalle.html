@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GAMEXUS - Tienda</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link class="styles" rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
 </head>
 <body>
 <header>
@@ -13,13 +18,37 @@
         <a href="/">Inicio</a>
         <a href="/tienda">Tienda</a>
         <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+        <a href="/noticias">Noticias</a>
+        <a href="/guias">Guías</a>
+        <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+        <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+        <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
         <a th:if="${session.usuario == null}" href="/login">Login</a>
         <a th:if="${session.usuario == null}" href="/register">Register</a>
         <a href="/carrito">Carrito</a>
         <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
         <a th:if="${session.usuario != null}" href="/logout">Logout</a>
-    </nav>
+                <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
 </header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
 
 <main class="page-shell detail-page">
     <section class="hero">
@@ -37,8 +66,16 @@
                 </div>
 
                 <div class="detail-meta">
-                    <p class="detail-price" th:text="'S/ ' + ${juego.precio}">S/ 0</p>
-                    
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <span th:if="${juego.descuento != null and juego.descuento > 0}" 
+                              style="text-decoration: line-through; color: var(--muted); font-size: 1.1rem;" 
+                              th:text="'S/ ' + ${juego.precio}">S/ 0</span>
+                        <span class="detail-price" style="margin: 0; font-size: 2rem;"
+                              th:text="'S/ ' + ${juego.getPrecioConDescuento()}">S/ 0</span>
+                        <span th:if="${juego.descuento != null and juego.descuento > 0}" 
+                              style="background: #ef4444; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; font-weight: 700;"
+                              th:text="'-' + ${juego.descuento} + '%'">-20%</span>
+                    </div>
                 </div>
 
                 <div class="detail-copy">
@@ -48,13 +85,13 @@
                 <div class="detail-chips">
                     <a class="button-solid" href="/tienda">Volver al catálogo</a>
                     
-                <div>
-                    <a th:if="${session.usuario == null}" class="button-solid button-success" href="/login">Comprar</a>
-                    <form th:if="${session.usuario != null}" action="/carrito/agregar" method="POST" style="display:inline;">
-                        <input type="hidden" name="juegoId" th:value="${juego.id}">
-                        <button class="button-solid button-success" type="submit"><b>COMPRAR</b></button>
-                    </form>
-                </div>
+                    <div>
+                        <a th:if="${session.usuario == null}" class="button-solid button-success" href="/login">Comprar</a>
+                        <form th:if="${session.usuario != null}" action="/carrito/agregar" method="POST" style="display:inline;">
+                            <input type="hidden" name="juegoId" th:value="${juego.id}">
+                            <button class="button-solid button-success" type="submit"><b>COMPRAR</b></button>
+                        </form>
+                    </div>
                 </div>
             </article>
         </div>
@@ -62,10 +99,149 @@
 
     <section class="detail-section">
         <h2 class="section-title">Trailer</h2>
-       <p></p>
+        <p></p>
         <div class="detail-video" th:if="${videoEmbedUrl != null}">
             <iframe th:src="${videoEmbedUrl}" title="Trailer del juego" allowfullscreen
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+    </section>
+
+    <!-- Pestañas de Contenido Adicional (Fase 2) -->
+    <div class="tabs-container">
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="openTab(event, 'dlcs')">DLCs y Expansiones</button>
+            <button class="tab-btn" onclick="openTab(event, 'requisitos')">Requisitos del Sistema</button>
+            <button class="tab-btn" onclick="openTab(event, 'noticiasTab')">Noticias</button>
+            <button class="tab-btn" onclick="openTab(event, 'guiasTab')">Guías y Tutoriales</button>
+            <button class="tab-btn" onclick="openTab(event, 'trucosTab')">Trucos y Secretos</button>
+        </div>
+
+        <!-- DLCs y Expansiones Tab -->
+        <div id="dlcs" class="tab-content active">
+            <div th:if="${#lists.isEmpty(dlcs)}" class="empty-message">No hay DLCs o expansiones disponibles para este juego.</div>
+            <div th:if="${!#lists.isEmpty(dlcs)}" class="dlc-grid">
+                <article class="dlc-card" th:each="dlc : ${dlcs}">
+                    <h4 th:text="${dlc.nombre}">Nombre del DLC</h4>
+                    <p th:text="${dlc.descripcion}">Descripción del DLC</p>
+                    <div class="dlc-footer">
+                        <span class="dlc-price" th:text="'S/ ' + ${dlc.precio}">S/ 0.00</span>
+                        <a th:if="${session.usuario == null}" class="button-solid button-success" style="padding: 8px 14px; font-size: 0.9rem;" href="/login"><b>Comprar DLC</b></a>
+                        <form th:if="${session.usuario != null}" action="/carrito/agregar" method="POST" style="display:inline;">
+                            <input type="hidden" name="juegoId" th:value="${dlc.id}">
+                            <button class="button-solid button-success" style="padding: 8px 14px; font-size: 0.9rem;" type="submit"><b>Comprar DLC</b></button>
+                        </form>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <!-- Requisitos del Sistema Tab -->
+        <div id="requisitos" class="tab-content">
+            <div class="requirements-grid">
+                <div class="requirements-card">
+                    <h4>Requisitos Mínimos</h4>
+                    <p th:text="${juego.requisitosMinimos != null ? juego.requisitosMinimos : 'No especificados.'}"></p>
+                </div>
+                <div class="requirements-card">
+                    <h4>Requisitos Recomendados</h4>
+                    <p th:text="${juego.requisitosRecomendados != null ? juego.requisitosRecomendados : 'No especificados.'}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Noticias del Juego Tab -->
+        <div id="noticiasTab" class="tab-content">
+            <div th:if="${#lists.isEmpty(noticias)}" class="empty-message">No hay noticias recientes para este juego.</div>
+            <div th:if="${!#lists.isEmpty(noticias)}" class="extra-list">
+                <a th:each="noticia : ${noticias}" th:href="@{/noticias/{id}(id=${noticia.id})}" class="extra-item-card">
+                    <div class="extra-item-content">
+                        <h4 th:text="${noticia.titulo}">Título noticia</h4>
+                        <p th:text="${noticia.subtitulo}">Subtítulo noticia</p>
+                    </div>
+                    <span class="extra-item-action">Leer Noticia →</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Guías y Tutoriales Tab -->
+        <div id="guiasTab" class="tab-content">
+            <div th:if="${#lists.isEmpty(guias)}" class="empty-message">No hay guías de la comunidad disponibles para este juego.</div>
+            <div th:if="${!#lists.isEmpty(guias)}" class="extra-list">
+                <a th:each="guia : ${guias}" th:href="@{/guias/{id}(id=${guia.id})}" class="extra-item-card">
+                    <div class="extra-item-content">
+                        <h4 th:text="${guia.titulo}">Título guía</h4>
+                        <p th:text="'Por: ' + ${guia.autor} + ' | Fecha: ' + ${#temporals.format(guia.fecha, 'dd/MM/yyyy')}">Autor y fecha</p>
+                    </div>
+                    <span class="extra-item-action">Ver Guía →</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Trucos y Secretos Tab -->
+        <div id="trucosTab" class="tab-content">
+            <div th:if="${#lists.isEmpty(trucos)}" class="empty-message">No hay trucos o secretos registrados para este juego.</div>
+            <div th:if="${!#lists.isEmpty(trucos)}" class="extra-list">
+                <div th:each="truco : ${trucos}" class="extra-item-card" style="cursor: default;">
+                    <div class="extra-item-content">
+                        <h4 th:text="${truco.titulo}" style="color: var(--accent-3);">Título truco</h4>
+                        <p th:text="${truco.contenido}" style="white-space: pre-line; color: var(--text); font-size: 0.95rem; margin-top: 8px;">Contenido truco</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="detail-section">
+        <h2 class="section-title">Acciones del usuario</h2>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <form th:if="${session.usuario != null}" action="/favoritos/alternar" method="post">
+                <input type="hidden" name="juegoId" th:value="${juego.id}">
+                <button type="submit" class="button-solid" th:text="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}">Favoritos</button>
+            </form>
+            <a th:if="${session.usuario == null}" class="button-solid" href="/login">Inicia sesión para guardar favoritos</a>
+        </div>
+    </section>
+
+    <!-- Comentarios y Valoraciones (Fase 2) -->
+    <section class="detail-section">
+        <h2 class="section-title">Comentarios y valoraciones</h2>
+        
+        <!-- Puntuación promedio y estadísticas -->
+        <div class="rating-overview">
+            <div class="rating-big-score">
+                <h3 th:text="${promedioPuntuacion != null ? promedioPuntuacion : '0.0'}">0.0</h3>
+                <p>de 5 estrellas</p>
+            </div>
+            <div>
+                <div class="rating-stars">
+                    <!-- Estrellas doradas -->
+                    <span th:if="${promedioPuntuacion >= 0.5}">⭐</span>
+                    <span th:if="${promedioPuntuacion >= 1.5}">⭐</span>
+                    <span th:if="${promedioPuntuacion >= 2.5}">⭐</span>
+                    <span th:if="${promedioPuntuacion >= 3.5}">⭐</span>
+                    <span th:if="${promedioPuntuacion >= 4.5}">⭐</span>
+                    <span th:if="${promedioPuntuacion < 0.5}">Sin valoraciones</span>
+                </div>
+                <p style="margin: 0; color: var(--muted);" th:text="${#lists.size(resenas)} + ' valoraciones de la comunidad'">0 valoraciones</p>
+            </div>
+        </div>
+
+        <div th:if="${session.usuario != null}" class="panel-card" style="max-width: 760px; margin-bottom: 20px;">
+            <form th:action="@{/juego/{juegoId}/resenas(juegoId=${juego.id})}" method="post" class="admin-form">
+                <input type="hidden" name="juegoId" th:value="${juego.id}">
+                <label>Calificación (1 al 5)<input type="number" name="calificacion" min="1" max="5" required></label>
+                <label>Comentario<textarea name="comentario" rows="4" required></textarea></label>
+                <button type="submit">Publicar comentario</button>
+            </form>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(resenas)}" class="empty-message">Todavía no hay comentarios para este juego.</div>
+        <div th:if="${!#lists.isEmpty(resenas)}" class="related-grid">
+            <article class="related-card" th:each="resena : ${resenas}">
+                <span class="game-category" th:text="${resena.autor}">Autor</span>
+                <h3 th:text="${'Valoración: ' + resena.calificacion + '/5 ⭐'}">Valoración</h3>
+                <p th:text="${resena.comentario}">Comentario</p>
+            </article>
         </div>
     </section>
 
@@ -86,5 +262,32 @@
 <footer>
     <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
 </footer>
+
+<!-- Script para el manejo de las pestañas -->
+<script>
+    function openTab(evt, tabId) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
 </body>
 </html>

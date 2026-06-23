@@ -1,143 +1,195 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GAMEXUS - Admin</title>
     <link rel="stylesheet" href="/css/admin.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
 </head>
+
 <body>
-<header class="admin-topbar">
-    <div>
-        <p class="eyebrow">Panel de administración</p>
-        <h1>GAMEXUS Admin</h1>
-    </div>
-    <nav>
-        <a href="/">Inicio</a>
-        <a href="/tienda">Tienda</a>
-        <a href="/admin">Admin</a>
-    </nav>
-</header>
-
-<main class="admin-shell">
-    <section class="hero-card">
+    <header class="admin-topbar">
         <div>
-            <p class="eyebrow">Control total</p>
-            <h1>Gestion de videojuegos</h1>
+            <p class="eyebrow">Panel de administración</p>
+            <h1>GAMEXUS Admin</h1>
         </div>
-        <div class="stats-grid">
-            <article>
-                <span>Juegos</span>
-                <strong th:text="${#lists.size(juegos)}">0</strong>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+            <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+            <a href="/noticias">Noticias</a>
+            <a href="/guias">Guías</a>
+            <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+            <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+            <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+            <a class="active" href="/admin">Admin</a>
+                    <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+    </header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="admin-shell">
+        <section class="hero-card">
+            <div>
+                <p class="eyebrow">Control total</p>
+                <h1>Gestion de videojuegos</h1>
+            </div>
+            <div class="stats-grid">
+                <article>
+                    <span>Juegos</span>
+                    <strong th:text="${#lists.size(juegos)}">0</strong>
+                </article>
+                <article>
+                    <span>Reseñas</span>
+                    <strong th:text="${#lists.size(resenas)}">0</strong>
+                </article>
+            </div>
+        </section>
+
+        <section class="panel-grid">
+            <article class="panel-card">
+                <h3 th:text="${juegoForm.id != null ? 'Editar juego' : 'Crear juego'}">Juego</h3>
+                <form th:action="@{/admin/juegos/guardar}" th:object="${juegoForm}" method="post" class="admin-form"
+                    enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{id}">
+                    <label>Nombre<input type="text" th:field="*{nombre}" required></label>
+                    <label>Categoría<input type="text" th:field="*{categoria}" required></label>
+                    <label>Descripción<textarea th:field="*{descripcion}" rows="4" required></textarea></label>
+                    <label>Precio<input type="number" step="0.01" th:field="*{precio}" required></label>
+                    <label>Imagen URL de respaldo<input type="text" th:field="*{imagenUrl}"
+                            placeholder="Opcional si subes la portada como archivo"></label>
+                    <label>Video URL del tráiler<input type="url" th:field="*{videoUrl}"
+                            placeholder="https://www.youtube.com/watch?v=..."></label>
+                    <label>Archivo de imagen de portada<input type="file" name="imagenFile" accept="image/*"></label>
+                    <small class="helper-text">Sube aquí la portada del juego; si no lo haces, se usará la URL escrita
+                        arriba.</small>
+                    <button type="submit">Guardar juego</button>
+                </form>
             </article>
-            <article>
-                <span>Reseñas</span>
-                <strong th:text="${#lists.size(resenas)}">0</strong>
+
+            <article class="panel-card">
+                <h3 th:text="${resenaForm.id != null ? 'Editar reseña' : 'Crear reseña'}">Reseña</h3>
+                <form th:action="@{/admin/resenas/guardar}" th:object="${resenaForm}" method="post" class="admin-form">
+                    <input type="hidden" th:field="*{id}">
+                    <label>Juego
+                        <select th:field="*{juegoId}" required>
+                            <option value="">Selecciona un juego</option>
+                            <option th:each="juego : ${juegosDisponibles}" th:value="${juego.id}"
+                                th:text="${juego.nombre}"></option>
+                        </select>
+                    </label>
+                    <label>Autor<input type="text" th:field="*{autor}" required></label>
+                    <label>Calificación<input type="number" min="1" max="5" th:field="*{calificacion}" required></label>
+                    <label>Comentario<textarea th:field="*{comentario}" rows="4" required></textarea></label>
+                    <button type="submit">Guardar reseña</button>
+                </form>
             </article>
-        </div>
-    </section>
+        </section>
 
-    <section class="panel-grid">
-        <article class="panel-card">
-            <h3 th:text="${juegoForm.id != null ? 'Editar juego' : 'Crear juego'}">Juego</h3>
-            <form th:action="@{/admin/juegos/guardar}" th:object="${juegoForm}" method="post" class="admin-form" enctype="multipart/form-data">
-                <input type="hidden" th:field="*{id}">
-                <label>Nombre<input type="text" th:field="*{nombre}" required></label>
-                <label>Categoría<input type="text" th:field="*{categoria}" required></label>
-                <label>Descripción<textarea th:field="*{descripcion}" rows="4" required></textarea></label>
-                <label>Precio<input type="number" step="0.01" th:field="*{precio}" required></label>
-                <label>Imagen URL de respaldo<input type="text" th:field="*{imagenUrl}" placeholder="Opcional si subes la portada como archivo"></label>
-                <label>Video URL del tráiler<input type="url" th:field="*{videoUrl}" placeholder="https://www.youtube.com/watch?v=..."></label>
-                <label>Archivo de imagen de portada<input type="file" name="imagenFile" accept="image/*"></label>
-                <small class="helper-text">Sube aquí la portada del juego; si no lo haces, se usará la URL escrita arriba.</small>
-                <button type="submit">Guardar juego</button>
-            </form>
-        </article>
+        <section class="panel-card table-card">
+            <div class="section-title">
+                <h3>Juegos registrados</h3>
+                <span th:text="${#lists.size(juegos)} + ' elementos'"></span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Tráiler</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="juego : ${juegos}">
+                            <td th:text="${juego.nombre}">Juego</td>
+                            <td th:text="${juego.categoria}">Categoria</td>
+                            <td th:text="'S/ ' + ${juego.precio}">0</td>
+                            <td>
+                                <a th:if="${juego.videoUrl != null and !#strings.isEmpty(juego.videoUrl)}"
+                                    th:href="${juego.videoUrl}" rel="noopener noreferrer">Ver video</a>
+                                <span th:unless="${juego.videoUrl != null and !#strings.isEmpty(juego.videoUrl)}">Sin
+                                    video</span>
+                            </td>
+                            <td class="actions">
+                                <a th:href="@{/admin(editarJuego=${juego.id})}">Editar</a>
+                                <a th:href="@{/admin/juegos/eliminar/{id}(id=${juego.id})}"
+                                    onclick="return confirm('¿Eliminar este juego?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        <article class="panel-card">
-            <h3 th:text="${resenaForm.id != null ? 'Editar reseña' : 'Crear reseña'}">Reseña</h3>
-            <form th:action="@{/admin/resenas/guardar}" th:object="${resenaForm}" method="post" class="admin-form">
-                <input type="hidden" th:field="*{id}">
-                <label>Juego
-                    <select th:field="*{juegoId}" required>
-                        <option value="">Selecciona un juego</option>
-                        <option th:each="juego : ${juegosDisponibles}" th:value="${juego.id}" th:text="${juego.nombre}"></option>
-                    </select>
-                </label>
-                <label>Autor<input type="text" th:field="*{autor}" required></label>
-                <label>Calificación<input type="number" min="1" max="5" th:field="*{calificacion}" required></label>
-                <label>Comentario<textarea th:field="*{comentario}" rows="4" required></textarea></label>
-                <button type="submit">Guardar reseña</button>
-            </form>
-        </article>
-    </section>
-
-    <section class="panel-card table-card">
-        <div class="section-title">
-            <h3>Juegos registrados</h3>
-            <span th:text="${#lists.size(juegos)} + ' elementos'"></span>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Precio</th>
-                    <th>Tráiler</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="juego : ${juegos}">
-                    <td th:text="${juego.nombre}">Juego</td>
-                    <td th:text="${juego.categoria}">Categoria</td>
-                    <td th:text="'S/ ' + ${juego.precio}">0</td>
-                    <td>
-                        <a th:if="${juego.videoUrl != null and !#strings.isEmpty(juego.videoUrl)}" th:href="${juego.videoUrl}" rel="noopener noreferrer">Ver video</a>
-                        <span th:unless="${juego.videoUrl != null and !#strings.isEmpty(juego.videoUrl)}">Sin video</span>
-                    </td>
-                    <td class="actions">
-                        <a th:href="@{/admin(editarJuego=${juego.id})}">Editar</a>
-                        <a th:href="@{/admin/juegos/eliminar/{id}(id=${juego.id})}" onclick="return confirm('¿Eliminar este juego?')">Eliminar</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section class="panel-card table-card">
-        <div class="section-title">
-            <h3>Reseñas registradas</h3>
-            <span th:text="${#lists.size(resenas)} + ' elementos'"></span>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                <tr>
-                    <th>Juego</th>
-                    <th>Autor</th>
-                    <th>Calificación</th>
-                    <th>Comentario</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="resena : ${resenas}">
-                    <td th:text="${resena.juego != null ? resena.juego.nombre : '-'}">Juego</td>
-                    <td th:text="${resena.autor}">Autor</td>
-                    <td th:text="${resena.calificacion}">5</td>
-                    <td th:text="${resena.comentario}">Comentario</td>
-                    <td class="actions">
-                        <a th:href="@{/admin(editarResena=${resena.id})}">Editar</a>
-                        <a th:href="@{/admin/resenas/eliminar/{id}(id=${resena.id})}" onclick="return confirm('¿Eliminar esta reseña?')">Eliminar</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-</main>
+        <section class="panel-card table-card">
+            <div class="section-title">
+                <h3>Reseñas registradas</h3>
+                <span th:text="${#lists.size(resenas)} + ' elementos'"></span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Juego</th>
+                            <th>Autor</th>
+                            <th>Calificación</th>
+                            <th>Comentario</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="resena : ${resenas}">
+                            <td th:text="${resena.juego != null ? resena.juego.nombre : '-'}">Juego</td>
+                            <td th:text="${resena.autor}">Autor</td>
+                            <td th:text="${resena.calificacion}">5</td>
+                            <td th:text="${resena.comentario}">Comentario</td>
+                            <td class="actions">
+                                <a th:href="@{/admin(editarResena=${resena.id})}">Editar</a>
+                                <a th:href="@{/admin/resenas/eliminar/{id}(id=${resena.id})}"
+                                    onclick="return confirm('¿Eliminar esta reseña?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
 </body>
+
 </html>

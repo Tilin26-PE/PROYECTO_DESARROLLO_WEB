@@ -44,6 +44,19 @@ public class ResenaService {
         return resenaRepository.save(resena);
     }
 
+    public Resena guardarComentarioPublico(Long juegoId, String usuarioLogin, String comentario, Integer calificacion) {
+        Juego juego = juegoService.buscarPorId(juegoId)
+                .orElseThrow(() -> new IllegalArgumentException("El juego seleccionado no existe"));
+
+        Resena resena = new Resena();
+        resena.setAutor(usuarioLogin);
+        resena.setUsuarioLogin(usuarioLogin);
+        resena.setComentario(comentario);
+        resena.setCalificacion(calificacion);
+        resena.setJuego(juego);
+        return resenaRepository.save(resena);
+    }
+
     public void eliminar(Long id) {
         resenaRepository.deleteById(id);
     }
@@ -56,5 +69,9 @@ public class ResenaService {
         form.setCalificacion(resena.getCalificacion());
         form.setJuegoId(resena.getJuego() != null ? resena.getJuego().getId() : null);
         return form;
+    }
+
+    public List<Resena> obtenerPorJuego(Long juegoId) {
+        return resenaRepository.findByJuego_IdOrderByIdDesc(juegoId);
     }
 }

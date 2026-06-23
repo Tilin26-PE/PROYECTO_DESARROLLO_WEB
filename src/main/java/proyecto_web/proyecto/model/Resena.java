@@ -27,6 +27,9 @@ public class Resena {
     @Column(nullable = false)
     private Integer calificacion;
 
+    @Column
+    private String usuarioLogin;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "juego_id", nullable = false)
     private Juego juego;
@@ -72,5 +75,13 @@ public class Resena {
 
     public void setJuego(Juego juego) {
         this.juego = juego;
+    }
+
+    public String getUsuarioLogin() {
+        return usuarioLogin;
+    }
+
+    public void setUsuarioLogin(String usuarioLogin) {
+        this.usuarioLogin = usuarioLogin;
     }
 }

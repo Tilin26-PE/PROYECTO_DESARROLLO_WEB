@@ -8,6 +8,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import proyecto_web.proyecto.model.Usuario;
+import proyecto_web.proyecto.service.HistorialActividadService;
 import proyecto_web.proyecto.service.LoginService;
 
 import java.io.IOException;
@@ -16,9 +17,11 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final LoginService loginService;
+    private final HistorialActividadService historialActividadService;
 
-    public OAuth2SuccessHandler(LoginService loginService) {
+    public OAuth2SuccessHandler(LoginService loginService, HistorialActividadService historialActividadService) {
         this.loginService = loginService;
+        this.historialActividadService = historialActividadService;
     }
 
     @Override
@@ -28,13 +31,18 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
         String email = oauthUser.getAttribute("email");
-        String nombre = oauthUser.getAttribute("given_name"); // ← solo el primer nombre
+        String nombre = oauthUser.getAttribute("name");
+        if (nombre == null || nombre.isBlank()) {
+            nombre = oauthUser.getAttribute("given_name");
+        }
 
-        Usuario usuario = loginService.buscarOCrearPorEmail(email, "ROLE_USER");
+        Usuario usuario = loginService.buscarOCrearPorEmail(email, nombre, "ROLE_USER");
 
         HttpSession session = request.getSession();
-        session.setAttribute("usuario", nombre); // ← guarda el nombre, no el email
+        session.setAttribute("usuario", usuario.getUsername());
+        session.setAttribute("nombreVisible", usuario.getDisplayName() != null && !usuario.getDisplayName().isBlank() ? usuario.getDisplayName() : nombre);
         session.setAttribute("rol", usuario.getRole());
+        historialActividadService.registrar(usuario.getUsername(), "LOGIN_GOOGLE", "Inicio de sesión con Google", null);
 
         response.sendRedirect("/");
     }

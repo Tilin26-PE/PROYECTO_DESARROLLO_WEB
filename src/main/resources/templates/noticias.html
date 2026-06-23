@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Noticias</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
+</head>
+<body>
+<header>
+    <h1>GAMEXUS</h1>
+    <nav>
+        <a href="/">Inicio</a>
+        <a href="/tienda">Tienda</a>
+        <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+        <a class="active" href="/noticias">Noticias</a>
+        <a href="/guias">Guías</a>
+        <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+        <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+        <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+        <a th:if="${session.usuario == null}" href="/login">Login</a>
+        <a th:if="${session.usuario == null}" href="/register">Register</a>
+        <a href="/carrito">Carrito</a>
+        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+                <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+</header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+<main class="page-shell">
+    <section class="hero" style="margin-bottom: 30px;">
+        <div class="hero-copy">
+            <h2>Novedades y Noticias del Gaming</h2>
+            <p>Mantente al día con los últimos lanzamientos, actualizaciones de tus juegos preferidos y anuncios del sector.</p>
+        </div>
+    </section>
+
+    <div th:if="${#lists.isEmpty(noticias)}" class="empty-message">No hay noticias publicadas por el momento.</div>
+
+    <section th:if="${!#lists.isEmpty(noticias)}" class="games" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <a class="game-card game-card-link"
+           th:each="noticia : ${noticias}"
+           th:href="@{/noticias/{id}(id=${noticia.id})}"
+           rel="noopener noreferrer" style="aspect-ratio: auto;">
+            <div class="game-image" style="aspect-ratio: 16 / 9;">
+                <img th:src="@{${noticia.imagenUrl != null ? noticia.imagenUrl : '/imgs/hogwarts.jpg'}}" th:alt="${noticia.titulo}">
+            </div>
+            <div class="game-body" style="padding: 8px 0;">
+                <span class="game-category" th:text="${#temporals.format(noticia.fecha, 'dd/MM/yyyy')}">Fecha</span>
+                <h3 th:text="${noticia.titulo}" style="margin: 6px 0; line-height: 1.3;">Título de la noticia</h3>
+                <p class="game-summary" th:text="${noticia.subtitulo}">Subtítulo o copete corto de la noticia.</p>
+                <span class="game-cta" style="margin-top: 12px; font-size: 0.9rem; padding: 8px 14px;">Leer noticia completa</span>
+            </div>
+        </a>
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+</footer>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
+</body>
+</html>

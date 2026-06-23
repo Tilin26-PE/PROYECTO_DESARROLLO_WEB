@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Comparador de Juegos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>GAMEXUS</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+            <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a class="active" href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+            <a href="/noticias">Noticias</a>
+            <a href="/guias">Guías</a>
+            <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+            <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+            <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+            <a th:if="${session.usuario == null}" href="/login">Login</a>
+            <a th:if="${session.usuario == null}" href="/register">Register</a>
+            <a href="/carrito">Carrito</a>
+            <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+            <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+            <span th:if="${session.usuario != null}" class="subtle">Bienvenido, <b th:text="${session.usuario}"></b></span>
+                    <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+    </header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="page-shell">
+        <section class="hero" style="margin-bottom: 30px;">
+            <div class="hero-copy">
+                <h2>Comparar Videojuegos</h2>
+                <p>Elige dos títulos del catálogo para contrastar sus características técnicas, puntuaciones y requisitos del sistema lado a lado.</p>
+            </div>
+        </section>
+
+        <!-- Selector Controls -->
+        <section class="comparison-selectors">
+            <form action="/comparar" method="get" style="display: contents;">
+                <div>
+                    <label for="juego1Id" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--muted);">Videojuego 1</label>
+                    <select id="juego1Id" name="juego1Id" class="filter-select" onchange="this.form.submit()">
+                        <option value="">-- Selecciona un Videojuego --</option>
+                        <option th:each="juego : ${juegosDisponibles}" 
+                                th:value="${juego.id}" 
+                                th:text="${juego.nombre}"
+                                th:selected="${juego1 != null and juego.id == juego1.id}"></option>
+                    </select>
+                </div>
+
+                <div class="vs-divider">VS</div>
+
+                <div>
+                    <label for="juego2Id" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--muted);">Videojuego 2</label>
+                    <select id="juego2Id" name="juego2Id" class="filter-select" onchange="this.form.submit()">
+                        <option value="">-- Selecciona un Videojuego --</option>
+                        <option th:each="juego : ${juegosDisponibles}" 
+                                th:value="${juego.id}" 
+                                th:text="${juego.nombre}"
+                                th:selected="${juego2 != null and juego.id == juego2.id}"></option>
+                    </select>
+                </div>
+            </form>
+        </section>
+
+        <!-- Comparison Table -->
+        <div class="comparison-table-wrapper" th:if="${juego1 != null or juego2 != null}">
+            <table class="comparison-table">
+                <tbody>
+                    <!-- Portada -->
+                    <tr>
+                        <th>Imagen / Portada</th>
+                        <td>
+                            <div th:if="${juego1 != null}" style="text-align: center;">
+                                <img th:src="@{${juego1.imagenUrl}}" th:alt="${juego1.nombre}" class="comparison-img">
+                                <h3 th:text="${juego1.nombre}" style="margin: 12px 0 0 0; color: white;"></h3>
+                            </div>
+                            <div th:if="${juego1 == null}" class="comparison-empty-slot">
+                                <p>No se ha seleccionado ningún juego</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div th:if="${juego2 != null}" style="text-align: center;">
+                                <img th:src="@{${juego2.imagenUrl}}" th:alt="${juego2.nombre}" class="comparison-img">
+                                <h3 th:text="${juego2.nombre}" style="margin: 12px 0 0 0; color: white;"></h3>
+                            </div>
+                            <div th:if="${juego2 == null}" class="comparison-empty-slot">
+                                <p>No se ha seleccionado ningún juego</p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Puntuación -->
+                    <tr>
+                        <th>Puntuación Comunidad</th>
+                        <td>
+                            <div th:if="${juego1 != null}">
+                                <span class="rating-badge-inline">
+                                    <span th:text="${#numbers.formatDecimal(rating1, 1, 1)}">0.0</span> ⭐
+                                </span>
+                                <span style="font-size: 0.9rem; color: var(--muted); margin-left: 8px;" th:text="'(' + ${reviews1} + ' reviews)'"></span>
+                            </div>
+                            <span th:if="${juego1 == null}">-</span>
+                        </td>
+                        <td>
+                            <div th:if="${juego2 != null}">
+                                <span class="rating-badge-inline">
+                                    <span th:text="${#numbers.formatDecimal(rating2, 1, 1)}">0.0</span> ⭐
+                                </span>
+                                <span style="font-size: 0.9rem; color: var(--muted); margin-left: 8px;" th:text="'(' + ${reviews2} + ' reviews)'"></span>
+                            </div>
+                            <span th:if="${juego2 == null}">-</span>
+                        </td>
+                    </tr>
+
+                    <!-- Precio -->
+                    <tr>
+                        <th>Precio</th>
+                        <td th:text="${juego1 != null} ? 'S/ ' + ${juego1.precio} : '-'"></td>
+                        <td th:text="${juego2 != null} ? 'S/ ' + ${juego2.precio} : '-'"></td>
+                    </tr>
+
+                    <!-- Categoria -->
+                    <tr>
+                        <th>Género / Categoría</th>
+                        <td th:text="${juego1 != null} ? ${juego1.categoria} : '-'"></td>
+                        <td th:text="${juego2 != null} ? ${juego2.categoria} : '-'"></td>
+                    </tr>
+
+                    <!-- Plataformas -->
+                    <tr>
+                        <th>Plataformas</th>
+                        <td th:text="${juego1 != null} ? ${juego1.plataforma} : '-'"></td>
+                        <td th:text="${juego2 != null} ? ${juego2.plataforma} : '-'"></td>
+                    </tr>
+
+                    <!-- Lanzamiento -->
+                    <tr>
+                        <th>Fecha de Lanzamiento</th>
+                        <td th:text="${juego1 != null and juego1.fechaLanzamiento != null} ? ${#temporals.format(juego1.fechaLanzamiento, 'dd/MM/yyyy')} : '-'"></td>
+                        <td th:text="${juego2 != null and juego2.fechaLanzamiento != null} ? ${#temporals.format(juego2.fechaLanzamiento, 'dd/MM/yyyy')} : '-'"></td>
+                    </tr>
+
+                    <!-- Requisitos Minimos -->
+                    <tr>
+                        <th>Requisitos Mínimos</th>
+                        <td>
+                            <pre th:if="${juego1 != null and juego1.requisitosMinimos != null}" 
+                                 th:text="${juego1.requisitosMinimos}" 
+                                 style="font-family: inherit; font-size: 0.88rem; color: var(--muted); white-space: pre-wrap; margin: 0;"></pre>
+                            <span th:if="${juego1 == null or juego1.requisitosMinimos == null}">-</span>
+                        </td>
+                        <td>
+                            <pre th:if="${juego2 != null and juego2.requisitosMinimos != null}" 
+                                 th:text="${juego2.requisitosMinimos}" 
+                                 style="font-family: inherit; font-size: 0.88rem; color: var(--muted); white-space: pre-wrap; margin: 0;"></pre>
+                            <span th:if="${juego2 == null or juego2.requisitosMinimos == null}">-</span>
+                        </td>
+                    </tr>
+
+                    <!-- Requisitos Recomendados -->
+                    <tr>
+                        <th>Requisitos Recomendados</th>
+                        <td>
+                            <pre th:if="${juego1 != null and juego1.requisitosRecomendados != null}" 
+                                 th:text="${juego1.requisitosRecomendados}" 
+                                 style="font-family: inherit; font-size: 0.88rem; color: var(--muted); white-space: pre-wrap; margin: 0;"></pre>
+                            <span th:if="${juego1 == null or juego1.requisitosRecomendados == null}">-</span>
+                        </td>
+                        <td>
+                            <pre th:if="${juego2 != null and juego2.requisitosRecomendados != null}" 
+                                 th:text="${juego2.requisitosRecomendados}" 
+                                 style="font-family: inherit; font-size: 0.88rem; color: var(--muted); white-space: pre-wrap; margin: 0;"></pre>
+                            <span th:if="${juego2 == null or juego2.requisitosRecomendados == null}">-</span>
+                        </td>
+                    </tr>
+
+                    <!-- Acciones -->
+                    <tr>
+                        <th>Acción</th>
+                        <td>
+                            <div th:if="${juego1 != null}" style="display: flex; gap: 10px;">
+                                <a th:href="@{/juego/{id}(id=${juego1.id})}" class="button-solid" style="padding: 8px 16px; font-size: 0.9rem;">Ver Ficha</a>
+                                <form th:action="@{/carrito/agregar/{juegoId}(juegoId=${juego1.id})}" method="post" style="display: inline;">
+                                    <button type="submit" class="button-ghost" style="padding: 8px 16px; font-size: 0.9rem; font-weight: 700; cursor: pointer;">Comprar</button>
+                                </form>
+                            </div>
+                            <span th:if="${juego1 == null}">-</span>
+                        </td>
+                        <td>
+                            <div th:if="${juego2 != null}" style="display: flex; gap: 10px;">
+                                <a th:href="@{/juego/{id}(id=${juego2.id})}" class="button-solid" style="padding: 8px 16px; font-size: 0.9rem;">Ver Ficha</a>
+                                <form th:action="@{/carrito/agregar/{juegoId}(juegoId=${juego2.id})}" method="post" style="display: inline;">
+                                    <button type="submit" class="button-ghost" style="padding: 8px 16px; font-size: 0.9rem; font-weight: 700; cursor: pointer;">Comprar</button>
+                                </form>
+                            </div>
+                            <span th:if="${juego2 == null}">-</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${juego1 == null and juego2 == null}" class="empty-message" style="text-align: center; padding: 60px;">
+            <h3>No se ha seleccionado ningún videojuego.</h3>
+            <p>Usa los selectores superiores para escoger dos videojuegos y compararlos lado a lado.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+    </footer>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
+</body>
+
+</html>

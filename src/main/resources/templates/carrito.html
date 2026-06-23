@@ -1,81 +1,129 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>GAMEXUS - Carrito</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
 </head>
 
 <body>
 
-<header>
-    <h1>🎮 GAMEXUS</h1>
-    <nav>
-        <a href="/">Inicio</a>
-        <a href="/tienda">Tienda</a>
-        <a href="/categorias">Categorias</a>
-        <a th:if="${session.usuario == null}" href="/login">Login</a>
-        <a th:if="${session.usuario == null}" href="/register">Register</a>
-        <a href="/carrito">🛒 Carrito</a>
-        <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
-        <a th:if="${session.usuario != null}" href="/logout">Logout</a>
-        <span th:if="${session.usuario != null}">
-            | Bienvenido, <b th:text="${session.usuario}"></b>
-        </span>
-    </nav>
-</header>
+    <header>
+        <h1>🎮 GAMEXUS</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+            <a href="/categorias">Categorias</a>
+            <a href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+            <a href="/noticias">Noticias</a>
+            <a href="/guias">Guías</a>
+            <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+            <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+            <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+            <a th:if="${session.usuario == null}" href="/login">Login</a>
+            <a th:if="${session.usuario == null}" href="/register">Register</a>
+            <a class="active" href="/carrito">🛒 Carrito</a>
+            <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+            <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+            <span th:if="${session.usuario != null}">
+                | Bienvenido, <b th:text="${session.usuario}"></b>
+            </span>
+                    <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+    </header>
 
-<div style="max-width:800px; margin:40px auto; padding:0 20px;">
-    <h2>🛒 Tu Carrito</h2>
-
-    <div th:if="${#lists.isEmpty(items)}">
-        <p style="color:#94a3b8;">Tu carrito está vacío. <a href="/" style="color:#6366f1;">Ver juegos</a></p>
-    </div>
-
-    <div th:if="${!#lists.isEmpty(items)}">
-        <div th:each="item : ${items}" style="background:#1e293b; border-radius:10px; padding:15px; margin-bottom:15px; display:flex; align-items:center; gap:15px;">
-            <img th:src="${item.juego.imagenUrl}" th:alt="${item.juego.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
-            <div style="flex:1;">
-                <h3 th:text="${item.juego.nombre}" style="margin:0 0 5px;"></h3>
-                <p style="margin:0; color:#94a3b8;">S/ <span th:text="${item.precio}"></span></p>
-            </div>
-
-            <!-- Botones + y - -->
-            <div style="display:flex; align-items:center; gap:8px;">
-                <form action="/carrito/quitar" method="POST">
-                    <input type="hidden" name="juegoId" th:value="${item.juego.id}">
-                    <button type="submit" style="background:#334155; border:none; color:white; width:32px; height:32px; border-radius:6px; cursor:pointer; font-size:1.2rem;">−</button>
-                </form>
-
-                <span th:text="${item.cantidad}" style="font-size:1.1rem; min-width:20px; text-align:center;"></span>
-
-                <form action="/carrito/agregar" method="POST">
-                    <input type="hidden" name="juegoId" th:value="${item.juego.id}">
-                    <button type="submit" style="background:#334155; border:none; color:white; width:32px; height:32px; border-radius:6px; cursor:pointer; font-size:1.2rem;">+</button>
-                </form>
-            </div>
-
-            <!-- Quitar todo -->
-            <form action="/carrito/eliminar" method="POST">
-                <input type="hidden" name="juegoId" th:value="${item.juego.id}">
-                <button type="submit" style="background:#ef4444; border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;">Quitar</button>
-            </form>
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
         </div>
-
-        <div style="background:#1e293b; border-radius:10px; padding:20px; margin-top:20px;">
-            <h3>Total: S/ <span th:text="${total}"></span></h3>
-            <form action="/carrito/confirmar" method="POST">
-                <button type="submit" style="background:#6366f1; border:none; color:white; padding:12px 24px; border-radius:6px; cursor:pointer; font-size:1rem;">
-                    Confirmar Compra
-                </button>
-            </form>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
         </div>
     </div>
-</div>
 
-<footer>
-    <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
-</footer>
+    <div style="max-width:800px; margin:40px auto; padding:0 20px;">
+        <h2>🛒 Tu Carrito</h2>
 
+        <div th:if="${#lists.isEmpty(items)}">
+            <p style="color:#94a3b8;">Tu carrito está vacío. <a href="/" style="color:#6366f1;">Ver juegos</a></p>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(items)}">
+            <div th:each="item : ${items}"
+                style="background:#1e293b; border-radius:10px; padding:15px; margin-bottom:15px; display:flex; align-items:center; gap:15px;">
+                <img th:src="${item.juego.imagenUrl}" th:alt="${item.juego.nombre}"
+                    style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
+                <div style="flex:1;">
+                    <h3 th:text="${item.juego.nombre}" style="margin:0 0 5px;"></h3>
+                    <p style="margin:0; color:#94a3b8;">S/ <span th:text="${item.precio}"></span></p>
+                </div>
+
+                <!-- Botones + y - -->
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <form action="/carrito/quitar" method="POST">
+                        <input type="hidden" name="juegoId" th:value="${item.juego.id}">
+                        <button type="submit"
+                            style="background:#334155; border:none; color:white; width:32px; height:32px; border-radius:6px; cursor:pointer; font-size:1.2rem;">−</button>
+                    </form>
+
+                    <span th:text="${item.cantidad}"
+                        style="font-size:1.1rem; min-width:20px; text-align:center;"></span>
+
+                    <form action="/carrito/agregar" method="POST">
+                        <input type="hidden" name="juegoId" th:value="${item.juego.id}">
+                        <button type="submit"
+                            style="background:#334155; border:none; color:white; width:32px; height:32px; border-radius:6px; cursor:pointer; font-size:1.2rem;">+</button>
+                    </form>
+                </div>
+
+                <!-- Quitar todo -->
+                <form action="/carrito/eliminar" method="POST">
+                    <input type="hidden" name="juegoId" th:value="${item.juego.id}">
+                    <button type="submit"
+                        style="background:#ef4444; border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;">Quitar</button>
+                </form>
+            </div>
+
+            <div style="background:#1e293b; border-radius:10px; padding:20px; margin-top:20px;">
+                <h3>Total: S/ <span th:text="${total}"></span></h3>
+                <form action="/carrito/confirmar" method="POST">
+                    <button type="submit"
+                        style="background:#6366f1; border:none; color:white; padding:12px 24px; border-radius:6px; cursor:pointer; font-size:1rem;">
+                        Confirmar Compra
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
 </body>
+
 </html>

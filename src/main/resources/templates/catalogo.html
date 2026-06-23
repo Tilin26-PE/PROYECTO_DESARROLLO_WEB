@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAMEXUS - Base de Datos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>GAMEXUS</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/tienda">Tienda</a>
+            <a href="/categorias">Categorias</a>
+            <a class="active" href="/catalogo">Base de Datos</a>
+            <a href="/comparar">Comparar</a>
+            <a href="/top-juegos">Top Juegos</a>
+            <a href="/lanzamientos">Lanzamientos</a>
+            <a href="/noticias">Noticias</a>
+            <a href="/guias">Guías</a>
+            <a th:if="${session.usuario != null}" href="/perfil">Perfil</a>
+            <a th:if="${session.usuario != null}" href="/favoritos">Favoritos</a>
+            <a th:if="${session.usuario != null}" href="/actividad">Actividad</a>
+            <a th:if="${session.usuario == null}" href="/login">Login</a>
+            <a th:if="${session.usuario == null}" href="/register">Register</a>
+            <a href="/carrito">Carrito</a>
+            <a th:if="${session.rol != null and session.rol == 'ROLE_ADMIN'}" href="/admin">Admin</a>
+            <a th:if="${session.usuario != null}" href="/logout">Logout</a>
+            <span th:if="${session.usuario != null}" class="subtle">Bienvenido, <b th:text="${session.usuario}"></b></span>
+                    <button id="theme-toggle" class="button-ghost" style="padding: 6px 12px; border-radius: 50%; width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text); margin-left: 10px;">🌓</button>`r`n        </nav>
+    </header>
+
+    <!-- Discount Alerts Banner -->
+    <div th:if="${favoritosConDescuento != null and !#lists.isEmpty(favoritosConDescuento)}" style="background: linear-gradient(135deg, rgba(124, 92, 255, 0.2), rgba(25, 211, 255, 0.15)); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; margin: 20px auto 10px; max-width: 1200px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);">
+        <div style="font-weight: 700; color: var(--accent-2); display: flex; align-items: center; gap: 8px; font-size: 1.05rem;">
+            <span>🔔 ¡Alerta de Descuento en tus Favoritos!</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div th:each="fav : ${favoritosConDescuento}" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;">
+                <strong th:text="${fav.nombre}">Juego</strong>
+                <span style="background: #ef4444; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 700; font-size: 0.78rem;" th:text="'-' + ${fav.descuento} + '%'">-50%</span>
+                <span th:text="'Ahora S/ ' + ${fav.getPrecioConDescuento()}" style="font-weight: 600; color: white;">Ahora S/ 0</span>
+                <a th:href="@{/juego/{id}(id=${fav.id})}" style="color: var(--accent-2); font-weight: 700; text-decoration: none; margin-left: 6px;">Ver Ficha →</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="page-shell">
+        <section class="hero" style="margin-bottom: 30px;">
+            <div class="hero-copy">
+                <h2>Explora la Base de Datos</h2>
+                <p>Encuentra detalles técnicos, requisitos del sistema, calificaciones promedio y disponibilidad en plataformas de todos tus juegos favoritos.</p>
+            </div>
+        </section>
+
+        <!-- Advanced Search Form -->
+        <section class="search-filter-panel">
+            <form action="/catalogo" method="get" class="search-form-grid">
+                <div class="filter-group">
+                    <label for="query">Buscar por Nombre o Descripción</label>
+                    <input type="text" id="query" name="query" th:value="${query}" placeholder="Ej: Legacy, GTA, Cooperativo..." class="search-input">
+                </div>
+
+                <div class="filter-group">
+                    <label for="categoria">Género / Categoría</label>
+                    <select id="categoria" name="categoria" class="filter-select">
+                        <option value="Todos">Todos los Géneros</option>
+                        <option th:each="cat : ${categorias}" 
+                                th:value="${cat}" 
+                                th:text="${cat}"
+                                th:selected="${cat == categoriaSel}"></option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="plataforma">Plataforma</label>
+                    <select id="plataforma" name="plataforma" class="filter-select">
+                        <option value="Todos">Todas las Plataformas</option>
+                        <option th:each="plat : ${plataformas}" 
+                                th:value="${plat}" 
+                                th:text="${plat}"
+                                th:selected="${plat == plataformaSel}"></option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="anio">Año de Lanzamiento</label>
+                    <select id="anio" name="anio" class="filter-select">
+                        <option value="">Cualquier Año</option>
+                        <option th:each="yr : ${anios}" 
+                                th:value="${yr}" 
+                                th:text="${yr}"
+                                th:selected="${yr == anioSel}"></option>
+                    </select>
+                </div>
+
+                <div class="search-btn-container">
+                    <button type="submit" class="search-submit-btn">
+                        <span>Buscar</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="store-toolbar">
+            <p th:text="${#lists.size(juegos)} + ' videojuegos encontrados'"></p>
+            <a th:if="${query != null or categoriaSel != null or plataformaSel != null or anioSel != null}" 
+               href="/catalogo" class="button-ghost" style="padding: 8px 16px; font-size: 0.88rem;">Limpiar Filtros</a>
+        </section>
+
+        <!-- Games Grid -->
+        <div th:if="${#lists.isEmpty(juegos)}" class="empty-message" style="text-align: center; padding: 40px;">
+            <h3>No se encontraron videojuegos con los criterios seleccionados.</h3>
+            <p>Prueba ajustando los filtros o buscando otro término.</p>
+        </div>
+
+        <section th:if="${!#lists.isEmpty(juegos)}" class="games">
+            <a class="game-card game-card-link" th:each="juego : ${juegos}" th:href="@{/juego/{id}(id=${juego.id})}">
+                <div class="game-image">
+                    <img th:src="@{${juego.imagenUrl}}" th:alt="${juego.nombre}">
+                </div>
+                <div class="game-body">
+                    <span class="game-category" th:text="${juego.categoria}">Categoria</span>
+                    <h3 th:text="${juego.nombre}">Juego</h3>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0;">
+                        <span class="rating-badge-inline" style="padding: 4px 8px; font-size: 0.8rem;">
+                            <span th:text="${#numbers.formatDecimal(ratings.get(juego.id), 1, 1)}">0.0</span> ⭐
+                        </span>
+                        <span style="font-size: 0.82rem; color: var(--muted);" th:text="${reviewCounts.get(juego.id)} + ' reviews'">0 reviews</span>
+                    </div>
+
+                    <p style="font-size: 0.88rem; color: var(--muted); margin: 8px 0; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                       th:text="${juego.descripcion}"></p>
+
+                    <div class="game-price-container" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; min-height: 24px;">
+                        <span th:if="${juego.descuento != null and juego.descuento > 0}" 
+                              style="text-decoration: line-through; color: var(--muted); font-size: 0.9rem;" 
+                              th:text="'S/ ' + ${juego.precio}">S/ 0</span>
+                        <span class="game-price" style="margin: 0;"
+                              th:text="'S/ ' + ${juego.getPrecioConDescuento()}">S/ 0</span>
+                        <span th:if="${juego.descuento != null and juego.descuento > 0}" 
+                              style="background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.78rem; font-weight: 700;"
+                              th:text="'-' + ${juego.descuento} + '%'">-20%</span>
+                    </div>
+                    <span class="game-cta">Ver ficha técnica</span>
+                </div>
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 GAMEXUS - Todos los derechos reservados</p>
+    </footer>
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('light-theme');
+                const theme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+            });
+        }
+    </script>
+</body>
+
+</html>

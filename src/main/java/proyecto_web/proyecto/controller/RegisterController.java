@@ -8,15 +8,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import proyecto_web.proyecto.model.Usuario;
+import proyecto_web.proyecto.service.HistorialActividadService;
 import proyecto_web.proyecto.service.LoginService;
 
 @Controller
 public class RegisterController {
 
     private final LoginService loginService;
+    private final HistorialActividadService historialActividadService;
 
-    public RegisterController(LoginService loginService) {
+    public RegisterController(LoginService loginService, HistorialActividadService historialActividadService) {
         this.loginService = loginService;
+        this.historialActividadService = historialActividadService;
     }
 
     @GetMapping("/register")
@@ -27,11 +30,13 @@ public class RegisterController {
    @PostMapping("/register")
 public String procesarRegistro(
         @RequestParam String username,
+        @RequestParam(required = false) String email,
         @RequestParam String password,
         RedirectAttributes redirectAttributes
 ) {
     try {
-        loginService.registrarYAutenticar(username, password, "ROLE_USER");
+        Usuario usuario = loginService.registrarUsuario(username, email, password, "ROLE_USER");
+        historialActividadService.registrar(usuario.getUsername(), "REGISTRO", "Registro de nuevo usuario", null);
         redirectAttributes.addFlashAttribute("success", "¡Usuario creado exitosamente! Inicia sesión.");
         return "redirect:/login";
     } catch (Exception e) {
