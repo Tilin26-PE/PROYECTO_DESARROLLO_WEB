@@ -44,6 +44,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         session.setAttribute("rol", usuario.getRole());
         historialActividadService.registrar(usuario.getUsername(), "LOGIN_GOOGLE", "Inicio de sesión con Google", null);
 
-        response.sendRedirect("http://localhost:4200/");
+        response.sendRedirect("https://proyecto-desarrollo-web-1-7jwj.onrender.com/");
     }
 }
