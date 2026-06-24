@@ -14,14 +14,17 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
+                        .allowedOrigins(
+                                "http://localhost:4200",
+                                "https://proyecto-desarrollo-web-1-7jwj.onrender.com/")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
 
             @Override
-            public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+            public void addResourceHandlers(
+                    org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
                 String userDir = System.getProperty("user.dir");
                 String imagesPath = "file:" + userDir + "/src/main/resources/static/imgs/";
                 registry.addResourceHandler("/imgs/**")
