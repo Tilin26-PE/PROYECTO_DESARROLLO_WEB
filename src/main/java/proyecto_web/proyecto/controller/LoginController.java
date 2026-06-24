@@ -33,19 +33,19 @@ public class LoginController {
         if (opt.isPresent()) {
             Usuario u = opt.get();
             session.setAttribute("usuario", u.getUsername());
-            session.setAttribute("nombreVisible", u.getDisplayName() != null && !u.getDisplayName().isBlank() ? u.getDisplayName() : u.getUsername());
+            session.setAttribute("nombreVisible",
+                    u.getDisplayName() != null && !u.getDisplayName().isBlank() ? u.getDisplayName() : u.getUsername());
             session.setAttribute("rol", u.getRole());
             activityService.registrar(u.getUsername(), "LOGIN", "Inicio de sesión con credenciales locales (API)", null);
             return ResponseEntity.ok(Map.of(
-                "authenticated", true,
-                "username", u.getUsername(),
-                "displayName", u.getDisplayName(),
-                "email", u.getEmail() != null ? u.getEmail() : "",
-                "role", u.getRole(),
-                "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
-                "bio", u.getBio() != null ? u.getBio() : "",
-                "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false
-            ));
+                    "authenticated", true,
+                    "username", u.getUsername(),
+                    "displayName", u.getDisplayName() != null ? u.getDisplayName() : u.getUsername(),
+                    "email", u.getEmail() != null ? u.getEmail() : "",
+                    "role", u.getRole(),
+                    "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
+                    "bio", u.getBio() != null ? u.getBio() : "",
+                    "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Usuario o contraseña incorrectos"));
     }
@@ -76,19 +76,19 @@ public class LoginController {
         }
         Usuario u = service.registrarUsuario(username, email, password, "USER");
         session.setAttribute("usuario", u.getUsername());
-        session.setAttribute("nombreVisible", u.getDisplayName());
+        session.setAttribute("nombreVisible",
+                u.getDisplayName() != null && !u.getDisplayName().isBlank() ? u.getDisplayName() : u.getUsername());
         session.setAttribute("rol", u.getRole());
         activityService.registrar(u.getUsername(), "REGISTRO", "Registro de cuenta nueva (API)", null);
         return ResponseEntity.ok(Map.of(
-            "authenticated", true,
-            "username", u.getUsername(),
-            "displayName", u.getDisplayName(),
-            "email", u.getEmail() != null ? u.getEmail() : "",
-            "role", u.getRole(),
-            "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
-            "bio", u.getBio() != null ? u.getBio() : "",
-            "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false
-        ));
+                "authenticated", true,
+                "username", u.getUsername(),
+                "displayName", u.getDisplayName() != null ? u.getDisplayName() : u.getUsername(),
+                "email", u.getEmail() != null ? u.getEmail() : "",
+                "role", u.getRole(),
+                "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
+                "bio", u.getBio() != null ? u.getBio() : "",
+                "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false));
     }
 
     @GetMapping("/current")
@@ -101,15 +101,14 @@ public class LoginController {
         if (opt.isPresent()) {
             Usuario u = opt.get();
             return ResponseEntity.ok(Map.of(
-                "authenticated", true,
-                "username", u.getUsername(),
-                "displayName", u.getDisplayName(),
-                "email", u.getEmail() != null ? u.getEmail() : "",
-                "role", u.getRole(),
-                "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
-                "bio", u.getBio() != null ? u.getBio() : "",
-                "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false
-            ));
+                    "authenticated", true,
+                    "username", u.getUsername(),
+                    "displayName", u.getDisplayName() != null ? u.getDisplayName() : u.getUsername(),
+                    "email", u.getEmail() != null ? u.getEmail() : "",
+                    "role", u.getRole(),
+                    "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
+                    "bio", u.getBio() != null ? u.getBio() : "",
+                    "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false));
         }
         return ResponseEntity.ok(Map.of("authenticated", false));
     }
@@ -125,20 +124,20 @@ public class LoginController {
         String avatarUrl = (String) body.get("avatarUrl");
         String bio = (String) body.get("bio");
         Boolean alertasDescuentos = (Boolean) body.get("alertasDescuentos");
-        
+
         Usuario u = service.actualizarPerfil(username, displayName, email, avatarUrl, bio, alertasDescuentos);
-        session.setAttribute("nombreVisible", u.getDisplayName());
+        session.setAttribute("nombreVisible",
+                u.getDisplayName() != null && !u.getDisplayName().isBlank() ? u.getDisplayName() : u.getUsername());
         activityService.registrar(username, "PERFIL_MODIFICAR", "Actualizó sus detalles de perfil", null);
         return ResponseEntity.ok(Map.of(
-            "authenticated", true,
-            "username", u.getUsername(),
-            "displayName", u.getDisplayName(),
-            "email", u.getEmail() != null ? u.getEmail() : "",
-            "role", u.getRole(),
-            "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
-            "bio", u.getBio() != null ? u.getBio() : "",
-            "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false
-        ));
+                "authenticated", true,
+                "username", u.getUsername(),
+                "displayName", u.getDisplayName() != null ? u.getDisplayName() : u.getUsername(),
+                "email", u.getEmail() != null ? u.getEmail() : "",
+                "role", u.getRole(),
+                "avatarUrl", u.getAvatarUrl() != null ? u.getAvatarUrl() : "",
+                "bio", u.getBio() != null ? u.getBio() : "",
+                "alertasDescuentos", u.getAlertasDescuentos() != null ? u.getAlertasDescuentos() : false));
     }
 
     @PostMapping("/cambiar-password")

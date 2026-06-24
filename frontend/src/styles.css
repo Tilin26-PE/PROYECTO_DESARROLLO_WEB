@@ -1907,28 +1907,32 @@ html.light-theme .feature-text strong {
 }
 
 .nav-avatar-link {
-    display: flex;
-    align-items: center;
+    display: block;
     border-radius: 50%;
     overflow: hidden;
-    width: 36px;
-    height: 36px;
-    border: 1.5px solid rgba(112, 0, 255, 0.3);
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    min-height: 52px;
+    align-self: center;
+    border: 2px solid var(--accent-2);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
     transition: var(--transition);
 }
 
 .nav-avatar-link:hover {
     border-color: var(--accent-2);
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+    transform: scale(1.08);
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
 }
 
 .nav-avatar-img {
-    width: 100%;
-    height: 100%;
+    width: 52px;
+    height: 52px;
     object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
-
 .admin-link {
     font-family: 'Space Grotesk', sans-serif;
     color: #ff8b3d !important;

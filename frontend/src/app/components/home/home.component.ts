@@ -97,21 +97,21 @@ import { ContenidoService, Noticia } from '../../services/contenido.service';
             
             <ng-template #fallbackNews>
               <div class="news-row-item">
-                <img src="/imgs/fifa25.jpg" alt="Xbox Showcase" class="news-thumb">
+                <img src="/imgs/fifa26.jpg" alt="Xbox Showcase" class="news-thumb">
                 <div class="news-item-info">
                   <h3>Xbox Showcase 2024: Todos los anuncios y juegos presentados</h3>
                   <span class="news-time">Hace 2 horas</span>
                 </div>
               </div>
               <div class="news-row-item">
-                <img src="/imgs/Hogwarts.jpg" alt="Elden Ring DLC" class="news-thumb">
+                <img src="/imgs/hogwarts.jpg" alt="Elden Ring DLC" class="news-thumb">
                 <div class="news-item-info">
                   <h3>El nuevo DLC de Elden Ring ya tiene fecha de lanzamiento oficial</h3>
                   <span class="news-time">Hace 5 horas</span>
                 </div>
               </div>
               <div class="news-row-item">
-                <img src="/imgs/GOW.jpg" alt="PlayStation 5 Pro" class="news-thumb">
+                <img src="/imgs/god-of-war.jpg" alt="PlayStation 5 Pro" class="news-thumb">
                 <div class="news-item-info">
                   <h3>PlayStation 5 Pro: Especificaciones oficiales y mejoras técnicas</h3>
                   <span class="news-time">Hace 1 día</span>

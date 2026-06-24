@@ -32,7 +32,7 @@ import { Juego } from '../../services/juego.service';
             <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
           </svg>
         </div>
-        <h1 class="logo">GAMEX</h1>
+        <h1 class="logo">GAMEXUS</h1>
       </a>
       
       <nav>
@@ -83,9 +83,12 @@ import { Juego } from '../../services/juego.service';
             </button>
 
             <!-- Circular profile avatar link -->
-            <a routerLink="/perfil" class="nav-avatar-link" title="Mi Perfil">
-              <img [src]="user().avatarUrl || '/imgs/default-avatar.png'" alt="Avatar" class="nav-avatar-img">
-            </a>
+            <a routerLink="/perfil" class="nav-avatar-link" title="Mi Perfil" 
+   style="width:auto;min-width:unset;height:36px;border-radius:24px;padding:0 12px 0 4px;display:flex;align-items:center;gap:8px;overflow:visible;">
+  <img [src]="user().avatarUrl || '/imgs/default-avatar.png'" alt="Avatar" class="nav-avatar-img" 
+       style="width:36px;height:36px;min-width:36px;border-radius:50%;object-fit:cover;">
+  <span style="color:var(--text);font-size:0.85rem;font-weight:600;white-space:nowrap;">{{ user().displayName }}</span>
+</a>
 
             <button (click)="logout()" class="logout-btn" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 8px;">Salir</button>
           </div>

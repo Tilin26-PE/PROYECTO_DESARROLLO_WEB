@@ -42,10 +42,24 @@ import { AuthService, User } from '../../services/auth.service';
             </div>
 
             <div>
-              <label for="profAvatar" style="display: block; margin-bottom: 6px; font-weight: 600;">URL del Avatar / Foto de Perfil</label>
-              <input type="url" id="profAvatar" name="profAvatar" [(ngModel)]="avatarUrl"
-                     style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
-            </div>
+  <label for="profAvatar" style="display: block; margin-bottom: 6px; font-weight: 600;">URL del Avatar / Foto de Perfil</label>
+  
+  <!-- Preview del avatar -->
+  <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+    <img 
+      [src]="avatarUrl || '/imgs/default-avatar.png'" 
+      alt="Avatar"
+      (error)="onAvatarError($event)"
+      style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border);">
+  </div>
+
+  <input type="url" id="profAvatar" name="profAvatar" [(ngModel)]="avatarUrl"
+         placeholder="https://ejemplo.com/foto.jpg"
+         style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
+  <span style="font-size: 0.78rem; color: var(--muted); margin-top: 4px; display: block;">
+    La URL debe apuntar directamente a una imagen (.jpg, .png, .webp)
+  </span>
+</div>
 
             <div>
               <label for="profBio" style="display: block; margin-bottom: 6px; font-weight: 600;">Biografía</label>
@@ -137,7 +151,7 @@ export class PerfilComponent implements OnInit {
   public passwordSuccess = signal<boolean>(false);
   public passwordError = signal<string>('');
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     this.authService.checkSession().subscribe({
@@ -166,7 +180,9 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-
+  onAvatarError(event: Event) {
+  (event.target as HTMLImageElement).src = '/imgs/default-avatar.png';
+}
   changePassword() {
     this.passwordError.set('');
     this.passwordSuccess.set(false);

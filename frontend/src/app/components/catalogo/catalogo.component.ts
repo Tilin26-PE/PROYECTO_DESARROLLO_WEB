@@ -18,61 +18,43 @@ import { JuegoService, Juego } from '../../services/juego.service';
       </section>
 
       <!-- Search and Filter Panel -->
-      <section class="search-filter-panel">
-        <form (ngSubmit)="onSearch()" class="admin-form" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
+      <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; margin-bottom: 32px;">
+        <form (ngSubmit)="onSearch()" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
           
-          <div style="flex: 2; min-width: 250px;">
-            <label for="searchQuery" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem;">Nombre del juego</label>
-            <input 
-              type="text" 
-              id="searchQuery" 
-              name="searchQuery" 
-              [(ngModel)]="query" 
-              placeholder="Ej. Grand Theft Auto, Metroid..." 
-              class="search-input" 
-              style="width: 100%; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
+          <div style="flex: 2; min-width: 200px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Nombre del Juego</label>
+            <input type="text" name="searchQuery" [(ngModel)]="query" placeholder="Ej. Grand Theft Auto, Metroid..."
+                   style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
           </div>
 
-          <div style="flex: 1; min-width: 150px;">
-            <label for="searchCategory" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem;">Categoría / Género</label>
-            <select 
-              id="searchCategory" 
-              name="searchCategory" 
-              [(ngModel)]="selectedCategory" 
-              class="filter-select" 
-              style="width: 100%; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
+          <div style="flex: 1; min-width: 130px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Categoría / Género</label>
+            <select name="searchCategory" [(ngModel)]="selectedCategory"
+                    style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
               <option value="">Todas</option>
               <option *ngFor="let cat of categories()" [value]="cat">{{ cat }}</option>
             </select>
           </div>
 
-          <div style="flex: 1; min-width: 150px;">
-            <label for="searchPlatform" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem;">Plataforma</label>
-            <select 
-              id="searchPlatform" 
-              name="searchPlatform" 
-              [(ngModel)]="selectedPlatform" 
-              class="filter-select" 
-              style="width: 100%; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
+          <div style="flex: 1; min-width: 130px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Plataforma</label>
+            <select name="searchPlatform" [(ngModel)]="selectedPlatform"
+                    style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
               <option value="">Todas</option>
               <option *ngFor="let plat of platforms()" [value]="plat">{{ plat }}</option>
             </select>
           </div>
 
-          <div style="flex: 1; min-width: 120px;">
-            <label for="searchYear" style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem;">Año</label>
-            <select 
-              id="searchYear" 
-              name="searchYear" 
-              [(ngModel)]="selectedYear" 
-              class="filter-select" 
-              style="width: 100%; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
+          <div style="flex: 1; min-width: 100px;">
+            <label style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Año</label>
+            <select name="searchYear" [(ngModel)]="selectedYear"
+                    style="width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
               <option value="">Todos</option>
               <option *ngFor="let y of years()" [value]="y">{{ y }}</option>
             </select>
           </div>
 
-          <div>
+          <div style="align-self: flex-end;">
             <button type="submit" class="button-solid" style="height: 44px; padding: 0 24px;">Buscar 🔍</button>
           </div>
 
@@ -95,9 +77,11 @@ import { JuegoService, Juego } from '../../services/juego.service';
           <div class="game-body">
             <span class="game-category">{{ juego.categoria }}</span>
             <h3>{{ juego.nombre }}</h3>
-            <p style="font-size: 0.82rem; color: var(--muted); margin: 0;">Plataforma: {{ juego.plataforma }} ({{ juego.fechaLanzamiento | date:'yyyy' }})</p>
+            <p style="font-size: 0.82rem; color: var(--muted); margin: 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+              Plataforma: {{ juego.plataforma }} ({{ juego.fechaLanzamiento | date:'yyyy' }})
+            </p>
             
-            <div class="game-price-container" style="display: flex; align-items: center; gap: 8px; margin: 8px 0 12px; min-height: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0 12px; min-height: 24px;">
               <span *ngIf="juego.descuento && juego.descuento > 0" 
                     style="text-decoration: line-through; color: var(--muted); font-size: 0.9rem;">
                 S/ {{ juego.precio | number:'1.2-2' }}
@@ -135,12 +119,10 @@ export class CatalogoComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    // Populate select lists from API
     this.juegoService.getCategorias().subscribe(data => this.categories.set(data));
     this.juegoService.getPlataformas().subscribe(data => this.platforms.set(data));
     this.juegoService.getAnios().subscribe(data => this.years.set(data));
 
-    // Listen for query parameters from routing
     this.route.queryParams.subscribe(params => {
       if (params['q']) {
         this.query = params['q'];
