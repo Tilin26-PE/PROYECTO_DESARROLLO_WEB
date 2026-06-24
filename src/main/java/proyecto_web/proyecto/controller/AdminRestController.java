@@ -119,7 +119,7 @@ public class AdminRestController {
                 Files.copy(targetBackendSrc, targetFrontend, StandardCopyOption.REPLACE_EXISTING);
             }
 
-            return ResponseEntity.ok(Map.of("url", "http://localhost:8080/imgs/" + safeName));
+            return ResponseEntity.ok(Map.of("url", "https://proyecto-desarrollo-web-mwti.onrender.com/imgs/" + safeName));
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al guardar el archivo: " + e.getMessage()));
