@@ -36,6 +36,12 @@ export class AdminService {
     return this.http.delete(`${this.apiUrl}/juegos/${id}`, { withCredentials: true });
   }
 
+  uploadPortada(file: File): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string }>(`${this.apiUrl}/juegos/upload`, formData, { withCredentials: true });
+  }
+
   saveResena(resena: { id?: number | null; autor: string; comentario: string; calificacion: number; juegoId: number }): Observable<any> {
     return this.http.post(`${this.apiUrl}/resenas`, resena, { withCredentials: true });
   }

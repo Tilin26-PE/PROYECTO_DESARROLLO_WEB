@@ -13,11 +13,13 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { PerfilComponent } from './components/perfil/perfil.component';
 import { AdminComponent } from './components/admin/admin.component';
+import { NoticiasComponent } from './components/noticias/noticias.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'tienda', component: TiendaComponent },
   { path: 'catalogo', component: CatalogoComponent },
+  { path: 'noticias', component: NoticiasComponent },
   { path: 'juego/:id', component: JuegoDetalleComponent },
   { path: 'comparar', component: CompararComponent },
   { path: 'top-juegos', component: TopJuegosComponent },

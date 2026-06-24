@@ -334,6 +334,29 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Trucos por defecto cargados.");
         }
 
+        // Sembrar 20 videojuegos reales y populares si no existen
+        java.util.List<Juego> todosLosJuegos = juegoRepository.findAll();
+        createGameIfMissing(todosLosJuegos, "Elden Ring", "RPG", "Levántate, Sinluz, y déjate guiar por la gracia para esgrimir el poder del Círculo de Elden y convertirte en un señor de Elden en las Tierras Intermedias.", 199.90, "PC, PS4, PS5, Xbox One, Xbox Series X/S", LocalDate.of(2022, 2, 25));
+        createGameIfMissing(todosLosJuegos, "Cyberpunk 2077", "RPG", "Cyberpunk 2077 es un RPG de aventura y acción de mundo abierto ambientado en la megalópolis de Night City.", 129.90, "PC, PS5, Xbox Series X/S", LocalDate.of(2020, 12, 10));
+        createGameIfMissing(todosLosJuegos, "The Witcher 3: Wild Hunt", "RPG", "Te convertirás en Geralt de Rivia, cazador de monstruos a sueldo, en un continente devastado por la guerra e infestado de monstruos.", 79.90, "PC, PS4, PS5, Xbox One, Xbox Series X/S", LocalDate.of(2015, 5, 19));
+        createGameIfMissing(todosLosJuegos, "Red Dead Redemption 2", "Acción", "América, 1899. Arthur Morgan y la banda de Van der Linde son forajidos en busca y captura tras un atraco fallido.", 159.90, "PC, PS4, Xbox One", LocalDate.of(2018, 10, 26));
+        createGameIfMissing(todosLosJuegos, "Minecraft", "Aventura", "Explora mundos infinitos y construye desde la casa más sencilla hasta el castillo más grandioso.", 89.90, "PC, Xbox, PlayStation, Nintendo Switch", LocalDate.of(2011, 11, 18));
+        createGameIfMissing(todosLosJuegos, "The Legend of Zelda: Breath of the Wild", "Aventura", "Olvida todo lo que sabes sobre los juegos de The Legend of Zelda y entra en un mundo de descubrimientos, exploración y aventura.", 210.00, "Nintendo Switch", LocalDate.of(2017, 3, 3));
+        createGameIfMissing(todosLosJuegos, "Portal 2", "Puzzle", "Portal 2 introduce un dinámico elenco de nuevos personajes, una serie de frescos elementos de puzle y un gran conjunto de enrevesadas cámaras de pruebas.", 39.90, "PC, Xbox 360, PS3", LocalDate.of(2011, 4, 18));
+        createGameIfMissing(todosLosJuegos, "Hades", "Roguelike", "Desafía al dios de los muertos y ábrete paso a golpes para escapar del Inframundo en este juego de mazmorras de acción rápida de los creadores de Bastion.", 49.90, "PC, Nintendo Switch, PS4, PS5, Xbox One", LocalDate.of(2020, 9, 17));
+        createGameIfMissing(todosLosJuegos, "Terraria", "Aventura", "¡Excava, lucha, explora, construye! Nada es imposible en este juego de aventuras repleto de acción.", 29.90, "PC, Xbox, PlayStation, Nintendo Switch", LocalDate.of(2011, 5, 16));
+        createGameIfMissing(todosLosJuegos, "Stardew Valley", "Simulación", "Has heredado la vieja parcela agrícola de tu abuelo en Stardew Valley. Decides partir hacia una nueva vida con unas herramientas de segunda mano.", 39.90, "PC, Nintendo Switch, Xbox, PlayStation", LocalDate.of(2016, 2, 26));
+        createGameIfMissing(todosLosJuegos, "Skyrim", "RPG", "La saga The Elder Scrolls da un paso de gigante con el esperadísimo Skyrim, redefiniendo el género de fantasía y mundos abiertos.", 99.90, "PC, PS4, PS5, Xbox One, Xbox Series X/S", LocalDate.of(2011, 11, 11));
+        createGameIfMissing(todosLosJuegos, "Resident Evil 4 Remake", "Terror", "Sobrevivir es solo el principio. Resident Evil 4 es un remake de la obra maestra original del survival horror de 2005.", 199.90, "PC, PS4, PS5, Xbox Series X/S", LocalDate.of(2023, 3, 24));
+        createGameIfMissing(todosLosJuegos, "Baldur's Gate 3", "RPG", "Baldur's Gate 3 es un RPG de nueva generación de los creadores de Divinity: Original Sin 2, ambientado en el mundo de Dungeons & Dragons.", 210.00, "PC, PS5, Xbox Series X/S", LocalDate.of(2023, 8, 3));
+        createGameIfMissing(todosLosJuegos, "Marvel's Spider-Man Remastered", "Acción", "En Marvel's Spider-Man Remastered, la vida de Peter Parker y la de Spider-Man se cruzan en una historia repleta de acción.", 180.00, "PC, PS5", LocalDate.of(2020, 11, 12));
+        createGameIfMissing(todosLosJuegos, "Doom Eternal", "Shooter", "Los ejércitos del infierno han invadido la Tierra. Conviértete en el Slayer en una épica campaña para un jugador.", 99.90, "PC, PS4, PS5, Xbox One, Xbox Series X/S", LocalDate.of(2020, 3, 20));
+        createGameIfMissing(todosLosJuegos, "Hollow Knight", "Metroidvania", "Desciende a las profundidades de un reino olvidado en Hollow Knight, una aventura de acción clásica en 2D.", 39.90, "PC, Nintendo Switch, PlayStation, Xbox", LocalDate.of(2017, 2, 24));
+        createGameIfMissing(todosLosJuegos, "Horizon Zero Dawn", "Aventura", "Acompaña a Aloy en su aventura para descubrir los secretos de un mundo dominado por máquinas letales.", 99.90, "PC, PS4", LocalDate.of(2017, 2, 28));
+        createGameIfMissing(todosLosJuegos, "Sekiro: Shadows Die Twice", "Acción", "Explora el Japón de la era Sengoku de finales del siglo XVI, un período brutal de constante conflicto a vida o muerte.", 150.00, "PC, PS4, Xbox One", LocalDate.of(2019, 3, 22));
+        createGameIfMissing(todosLosJuegos, "Fallout 4", "RPG", "Como único superviviente del Refugio 111, entras en un mundo destruido por la guerra nuclear. Cada segundo es una lucha por la supervivencia.", 50.00, "PC, PS4, Xbox One", LocalDate.of(2015, 11, 10));
+        createGameIfMissing(todosLosJuegos, "Monster Hunter: World", "RPG", "¡Te damos la bienvenida a un nuevo mundo! Conviértete en cazador y rastrea a los monstruos más temibles del ecosistema.", 80.00, "PC, PS4, Xbox One", LocalDate.of(2018, 1, 26));
+
         // Mostrar todos los videojuegos disponibles en la tienda
         System.out.println("\n========== VIDEOJUEGOS DISPONIBLES EN GAMEXUS ==========");
         var juegos = juegoRepository.findAll();
@@ -348,5 +371,18 @@ public class DataInitializer implements CommandLineRunner {
         }
         System.out.println("Total: " + juegos.size() + " videojuegos");
         System.out.println("========================================================\n");
+    }
+
+    private void createGameIfMissing(java.util.List<Juego> todosLosJuegos, String nombre, String categoria, String descripcion, Double precio, String plataforma, LocalDate fechaLanzamiento) {
+        boolean exists = todosLosJuegos.stream().anyMatch(j -> j.getNombre().equalsIgnoreCase(nombre));
+        if (!exists) {
+            Juego j = new Juego(nombre, categoria, descripcion, precio, "/imgs/GTAV.jpg"); // Imagen default
+            j.setPlataforma(plataforma);
+            j.setFechaLanzamiento(fechaLanzamiento);
+            j.setRequisitosMinimos("S.O.: Windows 10/11 (64-bit)\nProcesador: Dual Core o superior\nMemoria: 8 GB de RAM\nGráficos: Tarjeta gráfica compatible con DirectX 11");
+            j.setRequisitosRecomendados("S.O.: Windows 11 (64-bit)\nProcesador: Quad Core o superior\nMemoria: 16 GB de RAM\nGráficos: Tarjeta gráfica moderna compatible con DirectX 12");
+            juegoRepository.save(j);
+            System.out.println("Videojuego sembrado: " + nombre);
+        }
     }
 }

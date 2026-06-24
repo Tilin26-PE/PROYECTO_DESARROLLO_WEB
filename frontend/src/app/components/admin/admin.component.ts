@@ -117,10 +117,76 @@ import { Juego } from '../../services/juego.service';
                 <label style="display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.82rem;">Fecha de Lanzamiento</label>
                 <input type="date" [(ngModel)]="gameForm.fechaLanzamiento" name="fechaLanzamiento" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
               </div>
-
               <div>
-                <label style="display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.82rem;">Portada (URL de imagen)</label>
-                <input type="text" [(ngModel)]="gameForm.imagenUrl" name="imagenUrl" placeholder="Ej. /imgs/GTAV.jpg" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text);">
+                <label style="display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.82rem;">Portada del Videojuego</label>
+                
+                <!-- Large Interactive Preview Box -->
+                <div class="cover-preview-container" 
+                     (mouseenter)="isHovered.set(true)" 
+                     (mouseleave)="isHovered.set(false)"
+                     style="position: relative; width: 100%; max-width: 180px; aspect-ratio: 3/4; border-radius: 12px; border: 2px dashed var(--border); background: var(--bg-soft); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 12px auto; box-shadow: 0 8px 24px rgba(0,0,0,0.3); transition: all 0.3s ease;">
+                  
+                  <img *ngIf="gameForm.imagenUrl" [src]="gameForm.imagenUrl" style="width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s ease;">
+                  
+                  <div *ngIf="!gameForm.imagenUrl" style="text-align: center; color: var(--muted); padding: 20px;">
+                    <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">🎮</span>
+                    <span style="font-size: 0.75rem; font-weight: 500;">Sin Portada</span>
+                  </div>
+                  
+                  <!-- Hover Overlay -->
+                  <div class="cover-overlay" 
+                       [style.opacity]="isHovered() ? 1 : 0" 
+                       [style.pointer-events]="isHovered() ? 'auto' : 'none'"
+                       style="position: absolute; inset: 0; background: rgba(10, 10, 18, 0.75); display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; backdrop-filter: blur(4px);">
+                    <button type="button" (click)="openCoverSelector()" class="button-solid" style="padding: 6px 12px; font-size: 0.75rem; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(124, 92, 255, 0.4);">
+                      <span>🖼️</span> Cambiar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Modal for Selecting Covers -->
+                <div *ngIf="showCoverSelector()" style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+                  <div style="background: #151521; border: 1px solid var(--border); border-radius: 16px; padding: 24px; width: 90%; max-width: 480px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                      <h4 style="color: white; margin: 0; font-size: 1.15rem;">Seleccionar Portada</h4>
+                      <button type="button" (click)="closeCoverSelector()" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.2rem;">✕</button>
+                    </div>
+
+                    <!-- Options Grid -->
+                    <p style="color: var(--muted); font-size: 0.8rem; margin-top: 0; margin-bottom: 12px;">Elige una portada del catálogo:</p>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-height: 220px; overflow-y: auto; padding-right: 4px; margin-bottom: 16px;">
+                      <div *ngFor="let img of availableCovers" (click)="selectCover(img)" 
+                           [style.border-color]="gameForm.imagenUrl === img ? '#7c5cff' : 'transparent'"
+                           style="aspect-ratio: 3/4; border-radius: 8px; border: 2px solid transparent; overflow: hidden; cursor: pointer; transition: all 0.2s ease; position: relative;">
+                        <img [src]="img" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div *ngIf="gameForm.imagenUrl === img" style="position: absolute; top: 4px; right: 4px; background: #7c5cff; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold;">✓</div>
+                      </div>
+                    </div>
+
+                    <!-- Or Custom URL input -->
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                      <label style="display: block; margin-bottom: 6px; font-weight: bold; font-size: 0.8rem; color: white;">O escribe una URL personalizada</label>
+                      <input type="text" [(ngModel)]="gameForm.imagenUrl" name="imagenUrl" placeholder="Ej. /imgs/mi-juego.jpg o http://..." style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); font-size: 0.85rem;">
+                    </div>
+
+                    <!-- Or Upload file -->
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                      <label style="display: block; margin-bottom: 6px; font-weight: bold; font-size: 0.8rem; color: white;">O sube una imagen desde tu PC</label>
+                      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <input type="file" (change)="onFileSelected($event)" accept="image/*" id="fileUpload" style="display: none;">
+                        <label for="fileUpload" class="button-ghost" style="padding: 8px 16px; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: 1px dashed var(--border); border-radius: 8px;">
+                          <span>📁</span> {{ isUploading() ? 'Subiendo...' : 'Seleccionar Archivo' }}
+                        </label>
+                        <span *ngIf="uploadError()" style="color: #ef4444; font-size: 0.75rem;">{{ uploadError() }}</span>
+                        <span *ngIf="uploadSuccess()" style="color: #10b981; font-size: 0.75rem;">¡Subida con éxito!</span>
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                      <button type="button" (click)="closeCoverSelector()" class="button-solid" style="padding: 8px 16px; font-size: 0.85rem;">Aceptar</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -254,6 +320,62 @@ export class AdminComponent implements OnInit {
   public resenas = signal<any[]>([]);
   public categories = signal<string[]>([]);
   public activeSubTab = signal<string>('juegos');
+
+  // Signals for cover selector
+  public showCoverSelector = signal<boolean>(false);
+  public isHovered = signal<boolean>(false);
+  public availableCovers = [
+    '/imgs/agua-fuego.jpg',
+    '/imgs/cod-mw3.jpg',
+    '/imgs/fifa26.jpg',
+    '/imgs/god-of-war.jpg',
+    '/imgs/gta-v.jpg',
+    '/imgs/gta-vi.jpg',
+    '/imgs/Hogwarts.jpg',
+    '/imgs/metroid-4.jpg'
+  ];
+
+  openCoverSelector() {
+    this.showCoverSelector.set(true);
+  }
+
+  closeCoverSelector() {
+    this.showCoverSelector.set(false);
+  }
+
+  selectCover(cover: string) {
+    this.gameForm.imagenUrl = cover;
+  }
+
+  public isUploading = signal<boolean>(false);
+  public uploadError = signal<string>('');
+  public uploadSuccess = signal<boolean>(false);
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.isUploading.set(true);
+      this.uploadError.set('');
+      this.uploadSuccess.set(false);
+
+      this.adminService.uploadPortada(file).subscribe({
+        next: (res) => {
+          this.gameForm.imagenUrl = res.url;
+          if (!this.availableCovers.includes(res.url)) {
+            this.availableCovers.push(res.url);
+          }
+          this.isUploading.set(false);
+          this.uploadSuccess.set(true);
+          setTimeout(() => this.uploadSuccess.set(false), 3000);
+        },
+        error: (err) => {
+          this.isUploading.set(false);
+          this.uploadError.set(err.error?.error || 'Error al subir la imagen');
+        }
+      });
+    }
+  }
 
   // Game Form fields
   public gameForm: Partial<Juego> = {

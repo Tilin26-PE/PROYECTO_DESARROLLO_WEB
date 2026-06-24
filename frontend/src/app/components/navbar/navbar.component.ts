@@ -38,11 +38,10 @@ import { Juego } from '../../services/juego.service';
       <nav>
         <!-- Nav Links matching mockup -->
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
-        <a routerLink="/tienda" routerLinkActive="active">Juegos</a>
-        <a routerLink="/catalogo" routerLinkActive="active">Noticias</a>
+        <a routerLink="/noticias" routerLinkActive="active">Noticias</a>
         <a routerLink="/top-juegos" routerLinkActive="active">Reseñas</a>
         <a routerLink="/actividad" routerLinkActive="active">Comunidad</a>
-        <a routerLink="/tienda" routerLinkActive="active">Tienda</a>
+        <a routerLink="/catalogo" routerLinkActive="active">Tienda</a>
 
         <!-- Cart Link with counter -->
         <a routerLink="/carrito" routerLinkActive="active" class="cart-nav-btn" style="margin-left: 6px;">
