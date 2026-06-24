@@ -2,6 +2,7 @@ import { Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Juego } from './juego.service';
+import { environment } from '../../environments/environment';
 
 export interface CartItem {
   id: number;
@@ -26,7 +27,7 @@ export interface CartResponse {
   providedIn: 'root'
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8080/api/carrito';
+  private apiUrl = `${environment.apiUrl}/api/carrito`;
 
   // Signals for navbar and components to bind reactively
   public cartItemsCount = signal<number>(0);

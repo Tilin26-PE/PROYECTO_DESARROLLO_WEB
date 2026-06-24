@@ -1,6 +1,7 @@
 import { Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface User {
   authenticated: boolean;
@@ -17,7 +18,7 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/login';
+  private apiUrl = `${environment.apiUrl}/api/login`;
   
   // Expose current user state as an Angular signal for reactive UI bindings
   public currentUser: WritableSignal<User> = signal({ authenticated: false });

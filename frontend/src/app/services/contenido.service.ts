@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Noticia {
   id: number;
@@ -32,7 +33,7 @@ export interface Truco {
   providedIn: 'root'
 })
 export class ContenidoService {
-  private apiUrl = 'http://localhost:8080/api/contenido';
+  private apiUrl = `${environment.apiUrl}/api/contenido`;
 
   constructor(private http: HttpClient) {}
 

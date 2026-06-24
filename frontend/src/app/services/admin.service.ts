@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Juego } from './juego.service';
+import { environment } from '../../environments/environment';
 
 export interface AdminDashboardData {
   juegos: Juego[];
@@ -20,7 +21,7 @@ export interface AdminDashboardData {
   providedIn: 'root'
 })
 export class AdminService {
-  private apiUrl = 'http://localhost:8080/api/admin';
+  private apiUrl = `${environment.apiUrl}/api/admin`;
 
   constructor(private http: HttpClient) {}
 

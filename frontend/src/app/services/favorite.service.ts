@@ -2,12 +2,13 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Juego } from './juego.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoriteService {
-  private apiUrl = 'http://localhost:8080/api/favoritos';
+  private apiUrl = `${environment.apiUrl}/api/favoritos`;
   
   // Writable signal tracking current favorites list to trigger global discount alerts in navbar
   public favoritesList = signal<Juego[]>([]);
