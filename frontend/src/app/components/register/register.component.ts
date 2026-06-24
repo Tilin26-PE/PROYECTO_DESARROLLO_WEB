@@ -173,8 +173,7 @@ export class RegisterComponent {
   }
 
   loginWithGoogle() {
-  window.location.href =
-    'http://localhost:8080/oauth2/authorization/google';
+  window.location.href = 'https://proyecto-desarrollo-web-mwti.onrender.com/oauth2/authorization/google';
 }
   
 }

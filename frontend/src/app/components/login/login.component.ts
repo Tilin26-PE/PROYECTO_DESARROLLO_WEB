@@ -85,9 +85,8 @@ export class LoginComponent {
     private router: Router
   ) { }
   loginWithGoogle() {
-    window.location.href =
-      'http://localhost:8080/oauth2/authorization/google';
-  }
+  window.location.href = 'https://proyecto-desarrollo-web-mwti.onrender.com/oauth2/authorization/google';
+}
   onSubmit() {
     this.errorMessage.set('');
     if (this.username.trim() && this.password.trim()) {
